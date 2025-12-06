@@ -43,8 +43,8 @@ services:
       REDIS_URL: redis://redis:6379/0
       PORT: 3001
     volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./backend/src:/usr/src/app/src
+      - ./backend/package.json:/usr/src/app/package.json
       - uploads:/data/uploads
     ports:
       - "3002:3001"
@@ -64,9 +64,10 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:3002
       PORT: 3000
     volumes:
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/.next
+      - ./frontend/app:/usr/src/app/app
+      - ./frontend/components:/usr/src/app/components
+      - ./frontend/lib:/usr/src/app/lib
+      - ./frontend/package.json:/usr/src/app/package.json
     ports:
       - "3003:3000"
     depends_on:
