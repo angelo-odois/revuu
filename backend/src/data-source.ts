@@ -1,0 +1,15 @@
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import { User, Page, BlockTemplate, Asset, Setting } from "./entities/index.js";
+
+const isProduction = process.env.NODE_ENV === "production";
+
+export const AppDataSource = new DataSource({
+  type: "postgres",
+  url: process.env.POSTGRES_URL,
+  synchronize: !isProduction,
+  logging: !isProduction,
+  entities: [User, Page, BlockTemplate, Asset, Setting],
+  migrations: ["src/migrations/*.ts"],
+  subscribers: [],
+});
