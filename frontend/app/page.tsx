@@ -159,14 +159,18 @@ export default async function HomePage() {
 
                 {/* Foto principal */}
                 <div className="absolute inset-12 rounded-full bg-gradient-to-br from-amber-500/20 via-orange-500/20 to-yellow-500/20 p-1">
-                  <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-background shadow-2xl">
+                  <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-background shadow-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
                     <Image
                       src="/images/angelo.jpg"
                       alt="Angelo Pimentel - Product Designer"
                       fill
                       className="object-cover"
                       priority
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
                     />
+                    <span className="text-white text-6xl font-bold select-none">AP</span>
                   </div>
                 </div>
 

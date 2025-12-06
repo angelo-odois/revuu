@@ -60,14 +60,18 @@ export default function CVPage() {
         <aside className="w-[72mm] bg-zinc-900 text-white p-6 print:p-5 flex flex-col">
           {/* Photo */}
           <div className="mb-6">
-            <div className="w-24 h-24 mx-auto rounded-2xl overflow-hidden shadow-lg ring-2 ring-amber-400/50">
+            <div className="w-24 h-24 mx-auto rounded-2xl overflow-hidden shadow-lg ring-2 ring-amber-400/50 bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center relative">
               <Image
                 src="/images/angelo.jpg"
                 alt="Angelo Pimentel"
                 width={96}
                 height={96}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover absolute inset-0"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
               />
+              <span className="text-white text-2xl font-bold select-none">AP</span>
             </div>
           </div>
 
