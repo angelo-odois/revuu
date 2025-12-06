@@ -2,8 +2,8 @@
 
 export const dynamic = 'force-dynamic';
 
-import Image from "next/image";
 import { useEffect } from "react";
+import { ProfileImage } from "@/components/ProfileImage";
 
 export default function CVPage() {
   useEffect(() => {
@@ -61,17 +61,12 @@ export default function CVPage() {
           {/* Photo */}
           <div className="mb-6">
             <div className="w-24 h-24 mx-auto rounded-2xl overflow-hidden shadow-lg ring-2 ring-amber-400/50 bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center relative">
-              <Image
+              <ProfileImage
                 src="/images/angelo.jpg"
                 alt="Angelo Pimentel"
-                width={96}
-                height={96}
-                className="w-full h-full object-cover absolute inset-0"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
+                initials="AP"
+                size="sm"
               />
-              <span className="text-white text-2xl font-bold select-none">AP</span>
             </div>
           </div>
 

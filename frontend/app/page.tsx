@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
+import { ProfileImage } from "@/components/ProfileImage";
 import {
   Linkedin, Mail, ExternalLink, MapPin,
   ArrowDown, Sparkles, Palette, Briefcase, Rocket,
@@ -160,17 +161,12 @@ export default async function HomePage() {
                 {/* Foto principal */}
                 <div className="absolute inset-12 rounded-full bg-gradient-to-br from-amber-500/20 via-orange-500/20 to-yellow-500/20 p-1">
                   <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-background shadow-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                    <Image
+                    <ProfileImage
                       src="/images/angelo.jpg"
                       alt="Angelo Pimentel - Product Designer"
-                      fill
-                      className="object-cover"
-                      priority
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
+                      initials="AP"
+                      size="lg"
                     />
-                    <span className="text-white text-6xl font-bold select-none">AP</span>
                   </div>
                 </div>
 
