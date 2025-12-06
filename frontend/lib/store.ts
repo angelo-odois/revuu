@@ -83,6 +83,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
+      skipHydration: true,
     }
   )
 );
@@ -457,6 +458,7 @@ export const useEditorStore = create<EditorState>()(
     }),
     {
       name: "editor-storage",
+      skipHydration: true,
       partialize: (state) => ({
         customTemplates: state.customTemplates,
         themeSettings: state.themeSettings,

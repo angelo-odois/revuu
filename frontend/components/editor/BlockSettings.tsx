@@ -897,9 +897,9 @@ function FieldRenderer({ fieldKey, field, value, onChange, compact }: FieldRende
             value={(value as string) || ""}
             onChange={(e) => onChange(e.target.value)}
           />
-          {value && (
+          {typeof value === 'string' && value && (
             <img
-              src={value as string}
+              src={value}
               alt="Preview"
               className="w-full h-24 object-cover rounded-md"
             />

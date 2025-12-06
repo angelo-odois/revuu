@@ -1,11 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect } from "react";
 
 export default function CVPage() {
-  return (
-    <div className="min-h-screen bg-zinc-100 print:bg-white">
-      <style jsx global>{`
+  useEffect(() => {
+    const styleId = 'cv-print-styles';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
         @media print {
           @page {
             margin: 0;
@@ -19,7 +23,17 @@ export default function CVPage() {
             display: none !important;
           }
         }
-      `}</style>
+      `;
+      document.head.appendChild(style);
+    }
+    return () => {
+      const style = document.getElementById(styleId);
+      if (style) style.remove();
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-zinc-100 print:bg-white">
 
       {/* Action buttons */}
       <div className="no-print fixed top-4 right-4 flex gap-2 z-50">
