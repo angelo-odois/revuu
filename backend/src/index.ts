@@ -18,8 +18,21 @@ const UPLOADS_PATH = process.env.UPLOADS_PATH || "/data/uploads";
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://angelo.odois.com.br",
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
 }));
 
