@@ -25,6 +25,8 @@ interface PageData {
   slug: string;
   seoTitle?: string;
   seoDescription?: string;
+  coverImageUrl?: string;
+  ogImageUrl?: string;
   status: "draft" | "published";
   contentJSON: {
     blocks: Block[];
@@ -37,7 +39,7 @@ export default function PageEditorPage() {
   const id = params?.id ?? "";
   const router = useRouter();
   const { user, accessToken } = useAuthStore();
-  const { setBlocks, blocks } = useEditorStore();
+  const { setBlocks, blocks, updatePageSettings, pageSettings } = useEditorStore();
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -79,6 +81,14 @@ export default function PageEditorPage() {
         setSeoDescription(foundPage.seoDescription || "");
         setStatus(foundPage.status);
         setBlocks(foundPage.contentJSON?.blocks || []);
+        // Load cover image into pageSettings
+        updatePageSettings({
+          coverImage: foundPage.coverImageUrl || "",
+          ogImage: foundPage.ogImageUrl || "",
+          title: foundPage.seoTitle || "",
+          description: foundPage.seoDescription || "",
+          slug: foundPage.slug,
+        });
       }
     } catch (error) {
       console.error("Failed to load page:", error);
@@ -96,6 +106,9 @@ export default function PageEditorPage() {
       return;
     }
 
+    // Get current pageSettings from store
+    const currentPageSettings = useEditorStore.getState().pageSettings;
+
     setSaving(true);
     try {
       await api.updatePage(
@@ -105,6 +118,8 @@ export default function PageEditorPage() {
           slug,
           seoTitle: seoTitle || undefined,
           seoDescription: seoDescription || undefined,
+          coverImageUrl: currentPageSettings.coverImage || undefined,
+          ogImageUrl: currentPageSettings.ogImage || undefined,
           status,
           contentJSON: {
             blocks: editorBlocks,
