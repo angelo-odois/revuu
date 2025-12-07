@@ -48,6 +48,9 @@ export class Page {
   @Column({ type: "varchar", name: "og_image_url", length: 500, nullable: true })
   ogImageUrl?: string;
 
+  @Column({ type: "varchar", name: "cover_image_url", length: 500, nullable: true })
+  coverImageUrl?: string;
+
   @Column({ name: "content_json", type: "jsonb", default: { blocks: [] } })
   contentJSON!: ContentJSON;
 

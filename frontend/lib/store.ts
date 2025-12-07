@@ -100,6 +100,7 @@ export interface PageSettings {
   title: string;
   description: string;
   slug: string;
+  coverImage: string;
   ogImage: string;
   favicon: string;
   customCss: string;
@@ -143,6 +144,7 @@ const defaultPageSettings: PageSettings = {
   title: "",
   description: "",
   slug: "",
+  coverImage: "",
   ogImage: "",
   favicon: "",
   customCss: "",

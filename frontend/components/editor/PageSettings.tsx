@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Settings, Search, Globe, Code, Image } from "lucide-react";
+import { useState, useRef } from "react";
+import { Settings, Search, Globe, Code, Image, Upload, X, FileImage } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,8 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useEditorStore, PageSettings as PageSettingsType } from "@/lib/store";
+import { useAuthStore } from "@/lib/store";
+import { api } from "@/lib/api";
 
 interface PageSettingsProps {
   children: React.ReactNode;
@@ -29,8 +31,11 @@ interface PageSettingsProps {
 
 export function PageSettings({ children }: PageSettingsProps) {
   const { pageSettings, updatePageSettings } = useEditorStore();
+  const { getValidToken } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [localSettings, setLocalSettings] = useState<PageSettingsType>(pageSettings);
+  const [uploading, setUploading] = useState(false);
+  const coverImageInputRef = useRef<HTMLInputElement>(null);
 
   const handleOpen = (isOpen: boolean) => {
     if (isOpen) {
@@ -48,6 +53,30 @@ export function PageSettings({ children }: PageSettingsProps) {
     setLocalSettings((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const token = await getValidToken();
+      if (!token) {
+        alert("Sessao expirada. Faca login novamente.");
+        return;
+      }
+      const result = await api.uploadFile(file, token) as { url: string };
+      updateLocal("coverImage", result.url);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Erro ao fazer upload da imagem");
+    } finally {
+      setUploading(false);
+      if (coverImageInputRef.current) {
+        coverImageInputRef.current.value = "";
+      }
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -62,8 +91,12 @@ export function PageSettings({ children }: PageSettingsProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="seo" className="mt-4">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="general" className="mt-4">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="general" className="flex items-center gap-2">
+              <FileImage className="h-4 w-4" />
+              Geral
+            </TabsTrigger>
             <TabsTrigger value="seo" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
               SEO
@@ -77,6 +110,77 @@ export function PageSettings({ children }: PageSettingsProps) {
               Avancado
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="general" className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Imagem de Capa</Label>
+              <input
+                ref={coverImageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleCoverImageUpload}
+              />
+
+              {localSettings.coverImage ? (
+                <div className="relative rounded-lg border overflow-hidden">
+                  <img
+                    src={localSettings.coverImage}
+                    alt="Cover"
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => coverImageInputRef.current?.click()}
+                      disabled={uploading}
+                    >
+                      <Upload className="h-4 w-4 mr-1" />
+                      Trocar
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => updateLocal("coverImage", "")}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                  onClick={() => coverImageInputRef.current?.click()}
+                >
+                  {uploading ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                      <p className="text-sm text-muted-foreground">Enviando...</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <Upload className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        Clique para fazer upload da imagem de capa
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Recomendado: 1920x1080px ou maior
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="flex gap-2 mt-2">
+                <Input
+                  placeholder="Ou cole a URL da imagem"
+                  value={localSettings.coverImage}
+                  onChange={(e) => updateLocal("coverImage", e.target.value)}
+                />
+              </div>
+            </div>
+          </TabsContent>
 
           <TabsContent value="seo" className="space-y-4 mt-4">
             <div className="space-y-2">
