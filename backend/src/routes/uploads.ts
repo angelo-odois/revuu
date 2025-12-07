@@ -15,6 +15,7 @@ const router: ReturnType<typeof Router> = Router();
 const assetRepository = () => AppDataSource.getRepository(Asset);
 
 const UPLOADS_PATH = process.env.UPLOADS_PATH || "/data/uploads";
+const API_BASE_URL = process.env.API_BASE_URL || ""; // e.g., https://studio.odois.com.br
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_MIMES = [
   "image/jpeg",
@@ -101,7 +102,8 @@ router.post(
 
     const file = req.file;
     const relativePath = file.path.replace(UPLOADS_PATH, "");
-    const url = `/uploads${relativePath}`;
+    const baseUrl = API_BASE_URL || "";
+    const url = `${baseUrl}/uploads${relativePath}`;
 
     let thumbnailUrl: string | undefined;
 
@@ -112,7 +114,7 @@ router.post(
 
       try {
         await generateThumbnail(file.path, thumbPath);
-        thumbnailUrl = `/uploads${path.dirname(relativePath)}/${thumbFilename}`;
+        thumbnailUrl = `${baseUrl}/uploads${path.dirname(relativePath)}/${thumbFilename}`;
       } catch (error) {
         console.error("Thumbnail generation failed:", error);
       }
@@ -163,9 +165,19 @@ router.get(
 
     const [assets, total] = await queryBuilder.getManyAndCount();
 
+    // Add base URL to relative URLs for backward compatibility
+    const baseUrl = API_BASE_URL || "";
+    const addBaseUrl = (url: string | undefined | null) => {
+      if (!url) return url;
+      if (url.startsWith("http")) return url;
+      return `${baseUrl}${url}`;
+    };
+
     res.json({
       data: assets.map((a) => ({
         ...a,
+        url: addBaseUrl(a.url),
+        thumbnailUrl: addBaseUrl(a.thumbnailUrl),
         uploadedBy: a.uploadedBy ? { id: a.uploadedBy.id, name: a.uploadedBy.name } : null,
       })),
       pagination: {
