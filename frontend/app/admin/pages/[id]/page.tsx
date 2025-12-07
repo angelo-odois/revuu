@@ -33,8 +33,8 @@ interface PageData {
 }
 
 export default function PageEditorPage() {
-  const params = useParams();
-  const id = params.id as string;
+  const params = useParams<{ id: string }>();
+  const id = params?.id ?? "";
   const router = useRouter();
   const { user, accessToken } = useAuthStore();
   const { setBlocks, blocks } = useEditorStore();
