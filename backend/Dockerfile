@@ -1,3 +1,25 @@
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /usr/src/app
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@9 --activate
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
+
+# Force development mode for installing devDependencies (typescript, etc)
+# Unset any NODE_ENV that might be passed as ARG
+RUN unset NODE_ENV && pnpm install --frozen-lockfile || pnpm install
+
+# Copy source
+COPY . .
+
+# Build TypeScript (force development mode)
+RUN unset NODE_ENV && pnpm build
+
+# Production stage
 FROM node:20-alpine
 
 WORKDIR /usr/src/app
@@ -5,21 +27,18 @@ WORKDIR /usr/src/app
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
-# Copy package files first (for caching)
-COPY package.json ./
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
 
-# Install ALL dependencies (force dev mode to include typescript)
-ENV NODE_ENV=development
-RUN pnpm install
-
-# Copy source
-COPY . .
-
-# Build TypeScript
-RUN pnpm build
-
-# Switch to production mode
+# Install only production dependencies
 ENV NODE_ENV=production
+RUN pnpm install --prod --frozen-lockfile || pnpm install --prod
+
+# Copy built files from builder
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Create uploads directory
+RUN mkdir -p /data/uploads
 
 # Expose port
 EXPOSE 3001
