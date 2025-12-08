@@ -46,6 +46,12 @@ uploads/
 *.gif
 *.bmp
 
+# Allow public assets
+!frontend/public/*.png
+!frontend/public/*.jpg
+!frontend/public/*.jpeg
+!frontend/public/images/
+
 # Project files (local)
 projetos/
 instrucoes.md

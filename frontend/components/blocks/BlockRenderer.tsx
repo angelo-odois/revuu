@@ -26,6 +26,7 @@ import { TimelineBlock } from "./TimelineBlock";
 import { GalleryBlock } from "./GalleryBlock";
 import { FormBlock } from "./FormBlock";
 import { ProcessBlock } from "./ProcessBlock";
+import { RowBlock } from "./RowBlock";
 import { BlockWrapper, BlockStyles } from "./BlockWrapper";
 
 interface BlockProps {
@@ -61,6 +62,7 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   gallery: GalleryBlock,
   form: FormBlock,
   process: ProcessBlock,
+  row: RowBlock,
 };
 
 export function BlockRenderer({ block }: { block: BlockProps }) {

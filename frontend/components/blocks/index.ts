@@ -24,6 +24,7 @@ export { TimelineBlock } from "./TimelineBlock";
 export { GalleryBlock } from "./GalleryBlock";
 export { FormBlock } from "./FormBlock";
 export { ProcessBlock, processSchema } from "./ProcessBlock";
+export { RowBlock, rowSchema } from "./RowBlock";
 export { BlockRenderer } from "./BlockRenderer";
 
 export const blockRegistry = {
@@ -1305,6 +1306,59 @@ export const blockRegistry = {
         { title: "Design", description: "Prototipar e refinar", icon: "pentool" },
         { title: "Teste", description: "Validar com usuarios", icon: "check" },
       ],
+    },
+  },
+  row: {
+    name: "Linha / Layout",
+    category: "layout",
+    schema: {
+      layout: {
+        type: "select",
+        label: "Proporcao",
+        options: ["50-50", "33-67", "67-33", "25-75", "75-25", "33-33-33", "25-50-25"],
+        default: "50-50",
+      },
+      gap: {
+        type: "select",
+        label: "Espacamento",
+        options: ["none", "small", "medium", "large"],
+        default: "medium",
+      },
+      verticalAlign: {
+        type: "select",
+        label: "Alinhamento Vertical",
+        options: ["top", "center", "bottom", "stretch"],
+        default: "center",
+      },
+      reverseOnMobile: {
+        type: "boolean",
+        label: "Inverter no Mobile",
+        default: false,
+      },
+      leftBlocks: {
+        type: "blocks",
+        label: "Blocos da Esquerda",
+        default: [],
+      },
+      centerBlocks: {
+        type: "blocks",
+        label: "Blocos do Centro (para layouts de 3 colunas)",
+        default: [],
+      },
+      rightBlocks: {
+        type: "blocks",
+        label: "Blocos da Direita",
+        default: [],
+      },
+    },
+    defaultProps: {
+      layout: "50-50",
+      gap: "medium",
+      verticalAlign: "center",
+      reverseOnMobile: false,
+      leftBlocks: [],
+      centerBlocks: [],
+      rightBlocks: [],
     },
   },
 };

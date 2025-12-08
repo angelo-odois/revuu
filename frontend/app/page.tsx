@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
 import { ProfileImage } from "@/components/ProfileImage";
 import {
@@ -51,8 +52,15 @@ export default async function HomePage() {
       {/* Header/Nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
         <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
-            Revuu
+          <Link href="/">
+            <Image
+              src="/revuuLogo.png"
+              alt="Revuu"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link href="#sobre" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
