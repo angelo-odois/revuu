@@ -107,6 +107,7 @@ export interface PageSettings {
   customJs: string;
   noIndex: boolean;
   canonicalUrl: string;
+  layout: "contained" | "full";
 }
 
 // Theme settings interface
@@ -151,6 +152,7 @@ const defaultPageSettings: PageSettings = {
   customJs: "",
   noIndex: false,
   canonicalUrl: "",
+  layout: "contained",
 };
 
 const defaultThemeSettings: ThemeSettings = {

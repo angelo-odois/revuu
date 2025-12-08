@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { cn } from "@/lib/utils";
 
 interface PageData {
   id: string;
@@ -16,6 +17,9 @@ interface PageData {
       type: string;
       props: Record<string, unknown>;
     }>;
+    meta?: {
+      layout?: "contained" | "full";
+    };
   };
 }
 
@@ -68,8 +72,12 @@ export default async function DynamicPage({
     notFound();
   }
 
+  const layout = page.contentJSON?.meta?.layout || "contained";
+
   return (
-    <main>
+    <main className={cn(
+      layout === "full" && "full-width-layout"
+    )}>
       {page.contentJSON.blocks.map((block) => (
         <BlockRenderer key={block.id} block={block} />
       ))}

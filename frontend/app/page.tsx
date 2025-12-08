@@ -52,7 +52,7 @@ export default async function HomePage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
         <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
-            Angelo Pimentel
+            Revuu
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link href="#sobre" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -68,12 +68,14 @@ export default async function HomePage() {
               Projetos
             </Link>
           </div>
-          <Link
-            href="#contato"
+          <a
+            href="https://wa.me/5561999911676?text=Ol%C3%A1%2C%20vim%20pelo%20seu%20portf%C3%B3lio!"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm px-4 py-2 bg-amber-500 text-white rounded-full hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
           >
             Contato
-          </Link>
+          </a>
         </nav>
       </header>
 
@@ -119,7 +121,9 @@ export default async function HomePage() {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
                 <a
-                  href="#contato"
+                  href="https://wa.me/5561999911676?text=Ol%C3%A1%2C%20vim%20pelo%20seu%20portf%C3%B3lio!"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group relative inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium overflow-hidden transition-all hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105"
                 >
                   <span className="relative z-10">Iniciar Conversa</span>
@@ -537,19 +541,21 @@ export default async function HomePage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <a
-              href="mailto:ahspimentel@gmail.com"
+              href="https://wa.me/5561999911676?text=Ol%C3%A1%2C%20vim%20pelo%20seu%20portf%C3%B3lio!"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all"
             >
-              <Mail className="h-5 w-5" />
-              ahspimentel@gmail.com
+              <Phone className="h-5 w-5" />
+              Falar no WhatsApp
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </a>
             <a
-              href="tel:+5561999911676"
+              href="mailto:ahspimentel@gmail.com"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-card/50 border border-border/50 rounded-full font-medium hover:bg-muted hover:border-amber-500/50 transition-all"
             >
-              <Phone className="h-5 w-5" />
-              (61) 99991-1676
+              <Mail className="h-5 w-5" />
+              ahspimentel@gmail.com
             </a>
           </div>
 

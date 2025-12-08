@@ -51,6 +51,7 @@ export default function PageEditorPage() {
   const [seoTitle, setSeoTitle] = useState("");
   const [seoDescription, setSeoDescription] = useState("");
   const [status, setStatus] = useState<"draft" | "published">("draft");
+  const [layout, setLayout] = useState<"contained" | "full">("contained");
 
   useEffect(() => {
     if (!user || !accessToken) {
@@ -80,6 +81,7 @@ export default function PageEditorPage() {
         setSeoTitle(foundPage.seoTitle || "");
         setSeoDescription(foundPage.seoDescription || "");
         setStatus(foundPage.status);
+        setLayout((foundPage.contentJSON?.meta?.layout as "contained" | "full") || "contained");
         setBlocks(foundPage.contentJSON?.blocks || []);
         // Load cover image into pageSettings
         updatePageSettings({
@@ -88,6 +90,7 @@ export default function PageEditorPage() {
           title: foundPage.seoTitle || "",
           description: foundPage.seoDescription || "",
           slug: foundPage.slug,
+          layout: (foundPage.contentJSON?.meta?.layout as "contained" | "full") || "contained",
         });
       }
     } catch (error) {
@@ -123,7 +126,10 @@ export default function PageEditorPage() {
           status,
           contentJSON: {
             blocks: editorBlocks,
-            meta: page?.contentJSON?.meta || {},
+            meta: {
+              ...(page?.contentJSON?.meta || {}),
+              layout,
+            },
           },
         },
         token
@@ -199,6 +205,21 @@ export default function PageEditorPage() {
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="minha-pagina"
               />
+            </div>
+            <div className="space-y-2">
+              <Label>Layout</Label>
+              <Select value={layout} onValueChange={(v: "contained" | "full") => {
+                setLayout(v);
+                updatePageSettings({ layout: v });
+              }}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="contained">Contido</SelectItem>
+                  <SelectItem value="full">Tela Cheia</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="seoTitle">SEO Title</Label>
