@@ -933,6 +933,16 @@ function FieldRenderer({ fieldKey, field, value, onChange, compact }: FieldRende
         />
       );
 
+    case "blocks":
+      return (
+        <NestedBlocksField
+          fieldKey={fieldKey}
+          field={field}
+          blocks={(value as Block[]) || []}
+          onChange={onChange}
+        />
+      );
+
     default:
       return null;
   }
@@ -1089,6 +1099,142 @@ function RepeaterField({ fieldKey, field, items, onChange }: RepeaterFieldProps)
                 </CollapsibleContent>
               </div>
             </Collapsible>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Nested Blocks Field Component - allows adding blocks inside other blocks
+interface NestedBlocksFieldProps {
+  fieldKey: string;
+  field: FieldSchema;
+  blocks: Block[];
+  onChange: (blocks: Block[]) => void;
+}
+
+function NestedBlocksField({ fieldKey, field, blocks, onChange }: NestedBlocksFieldProps) {
+  const [showBlockPicker, setShowBlockPicker] = useState(false);
+
+  // Filter out layout blocks to prevent infinite nesting
+  const availableBlocks = Object.entries(blockRegistry).filter(
+    ([key]) => key !== "row" && key !== "columns" && key !== "section"
+  );
+
+  const addBlock = (blockType: string) => {
+    const blockConfig = blockRegistry[blockType as keyof typeof blockRegistry];
+    if (!blockConfig) return;
+
+    const newBlock: Block = {
+      id: Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
+      type: blockType,
+      props: { ...blockConfig.defaultProps },
+    };
+
+    onChange([...blocks, newBlock]);
+    setShowBlockPicker(false);
+  };
+
+  const removeBlock = (index: number) => {
+    const newBlocks = blocks.filter((_, i) => i !== index);
+    onChange(newBlocks);
+  };
+
+  const moveBlock = (fromIndex: number, direction: "up" | "down") => {
+    const toIndex = direction === "up" ? fromIndex - 1 : fromIndex + 1;
+    if (toIndex < 0 || toIndex >= blocks.length) return;
+
+    const newBlocks = [...blocks];
+    const [movedBlock] = newBlocks.splice(fromIndex, 1);
+    newBlocks.splice(toIndex, 0, movedBlock);
+    onChange(newBlocks);
+  };
+
+  const getBlockName = (block: Block) => {
+    const config = blockRegistry[block.type as keyof typeof blockRegistry];
+    return config?.name || block.type;
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label className="text-sm">{field.label}</Label>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowBlockPicker(!showBlockPicker)}
+          className="h-7 text-xs"
+        >
+          <Plus className="h-3 w-3 mr-1" />
+          Adicionar Bloco
+        </Button>
+      </div>
+
+      {/* Block Picker */}
+      {showBlockPicker && (
+        <div className="border rounded-md p-2 bg-muted/30 max-h-[200px] overflow-y-auto">
+          <div className="grid grid-cols-2 gap-1">
+            {availableBlocks.map(([key, config]) => (
+              <Button
+                key={key}
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs justify-start"
+                onClick={() => addBlock(key)}
+              >
+                {config.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Block List */}
+      <div className="space-y-1">
+        {blocks.length === 0 ? (
+          <div className="text-xs text-muted-foreground text-center py-3 border border-dashed rounded-md">
+            Nenhum bloco. Clique em "Adicionar Bloco".
+          </div>
+        ) : (
+          blocks.map((block, index) => (
+            <div
+              key={block.id}
+              className="flex items-center gap-2 p-2 border rounded-md bg-card"
+            >
+              <GripVertical className="h-3 w-3 text-muted-foreground" />
+              <span className="flex-1 text-xs font-medium truncate">
+                {getBlockName(block)}
+              </span>
+              <div className="flex items-center gap-0.5">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5"
+                  onClick={() => moveBlock(index, "up")}
+                  disabled={index === 0}
+                >
+                  <ChevronDown className="h-3 w-3 rotate-180" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5"
+                  onClick={() => moveBlock(index, "down")}
+                  disabled={index === blocks.length - 1}
+                >
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 text-destructive hover:text-destructive"
+                  onClick={() => removeBlock(index)}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
           ))
         )}
       </div>

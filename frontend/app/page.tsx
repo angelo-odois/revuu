@@ -590,27 +590,76 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Revuu CTA Section */}
+      <section className="py-16 px-6 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent border-t border-border/50">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-600 dark:text-amber-400 text-sm font-medium mb-6">
+            <Sparkles className="h-4 w-4" />
+            Powered by Revuu
+          </div>
+
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Quer um portfólio como este?
+          </h2>
+
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Crie seu portfólio profissional em minutos com o <span className="text-amber-500 font-semibold">Revuu</span>.
+            Sem código, totalmente personalizável e pronto para impressionar recrutadores.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/admin"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium hover:bg-amber-600 hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all"
+            >
+              Criar meu Revuu grátis
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <p className="mt-6 text-sm text-muted-foreground">
+            Já usado por <span className="text-foreground font-medium">+500 profissionais</span> para destacar suas carreiras
+          </p>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 px-6 border-t border-border/50">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Angelo Pimentel. Feito com <Heart className="h-3 w-3 inline text-red-500 fill-red-500" /> em Brasília.
-          </p>
-          <div className="flex items-center gap-4">
-            <a
-              href="https://linkedin.com/in/ahspimentel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-amber-500 transition-colors"
-            >
-              <Linkedin className="h-5 w-5" />
-            </a>
-            <a
-              href="mailto:ahspimentel@gmail.com"
-              className="text-muted-foreground hover:text-amber-500 transition-colors"
-            >
-              <Mail className="h-5 w-5" />
-            </a>
+        <div className="max-w-6xl mx-auto">
+          {/* Revuu Branding */}
+          <div className="flex flex-col items-center mb-8 pb-8 border-b border-border/30">
+            <Image
+              src="/revuuLogo.png"
+              alt="Revuu"
+              width={100}
+              height={32}
+              className="h-6 w-auto mb-3 opacity-70"
+            />
+            <p className="text-sm text-muted-foreground text-center max-w-md">
+              A plataforma para profissionais criarem portfólios que convertem.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Angelo Pimentel. Feito com <Heart className="h-3 w-3 inline text-red-500 fill-red-500" /> em Brasília.
+            </p>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://linkedin.com/in/ahspimentel"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-amber-500 transition-colors"
+              >
+                <Linkedin className="h-5 w-5" />
+              </a>
+              <a
+                href="mailto:ahspimentel@gmail.com"
+                className="text-muted-foreground hover:text-amber-500 transition-colors"
+              >
+                <Mail className="h-5 w-5" />
+              </a>
+            </div>
           </div>
         </div>
       </footer>
