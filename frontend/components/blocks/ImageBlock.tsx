@@ -21,7 +21,7 @@ export function ImageBlock({
 }: ImageBlockProps) {
   if (!src) {
     return (
-      <section className="py-8 px-6">
+      <section>
         <div className="max-w-4xl mx-auto">
           <div className="aspect-video bg-muted/50 rounded-xl flex items-center justify-center border-2 border-dashed border-border">
             <p className="text-muted-foreground">Add an image</p>
@@ -46,7 +46,7 @@ export function ImageBlock({
   };
 
   return (
-    <section className="py-8 px-6">
+    <section>
       <figure className={cn("mx-auto", sizeClasses[size])}>
         <div
           className={cn(
