@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 
 const redisUrl = process.env.REDIS_URL;
 
@@ -27,7 +27,7 @@ if (redisUrl) {
       lazyConnect: true,
     });
 
-    redis.on("error", (error) => {
+    redis.on("error", (error: Error) => {
       console.error("Redis connection error, falling back to memory:", error.message);
       useMemory = true;
     });
@@ -38,7 +38,7 @@ if (redisUrl) {
     });
 
     // Try to connect
-    redis.connect().catch((err) => {
+    redis.connect().catch((err: Error) => {
       console.warn("Redis not available, using in-memory store:", err.message);
       useMemory = true;
     });
