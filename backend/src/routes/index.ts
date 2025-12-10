@@ -11,6 +11,7 @@ import projectsRoutes from "./projects.js";
 import portfolioRoutes from "./portfolio.js";
 import pageTemplatesRoutes from "./pageTemplates.js";
 import analyticsRoutes from "./analytics.js";
+import adminRoutes from "./admin.js";
 
 const router: ReturnType<typeof Router> = Router();
 
@@ -18,6 +19,7 @@ router.use("/auth", authRoutes);
 router.use("/pages", pagesRoutes);
 router.use("/admin/uploads", uploadsRoutes);
 router.use("/admin/block-templates", blockTemplatesRoutes);
+router.use("/admin", adminRoutes);
 
 // Portfolio routes
 router.use("/profile", profileRoutes);
