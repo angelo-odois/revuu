@@ -20,8 +20,10 @@ interface PageItem {
 
 async function getPages(): Promise<PageItem[]> {
   try {
+    // For SSR, use internal API URL (server-to-server communication)
+    const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/pages`,
+      `${API_URL}/api/pages`,
       { next: { revalidate: 60 } }
     );
     if (!res.ok) return [];

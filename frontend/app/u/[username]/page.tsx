@@ -18,7 +18,9 @@ interface PageProps {
 
 async function getPortfolio(username: string): Promise<PortfolioData | null> {
   try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    // For SSR, use internal API URL (server-to-server communication)
+    // Falls back to NEXT_PUBLIC_API_URL or localhost for development
+    const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
     const response = await fetch(`${API_URL}/api/portfolio/${username}`, {
       cache: "no-store",
     });

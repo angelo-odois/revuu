@@ -33,8 +33,10 @@ interface PageData {
 
 async function getPage(slug: string): Promise<PageData | null> {
   try {
+    // For SSR, use internal API URL (server-to-server communication)
+    const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/pages/${encodeURIComponent(slug)}`,
+      `${API_URL}/api/pages/${encodeURIComponent(slug)}`,
       { next: { revalidate: 60 } }
     );
 
