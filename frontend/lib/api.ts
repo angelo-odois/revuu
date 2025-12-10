@@ -1,6 +1,7 @@
-// In production, use empty string so requests go through Next.js rewrites
-// In development, use localhost:3001 directly
-const API_URL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== "undefined" && window.location.hostname !== "localhost" ? "" : "http://localhost:3001");
+import { getClientApiUrl } from "./config";
+
+// Use centralized API URL configuration
+const API_URL = getClientApiUrl();
 
 interface FetchOptions extends RequestInit {
   token?: string;

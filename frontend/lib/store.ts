@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { getClientApiUrl } from "./config";
 
 interface User {
   id: string;
@@ -71,8 +72,8 @@ export const useAuthStore = create<AuthState>()(
 
         // Token expired, try to refresh
         try {
-          const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-          const response = await fetch(`${API_URL}/api/auth/refresh`, {
+          const apiUrl = getClientApiUrl();
+          const response = await fetch(`${apiUrl}/api/auth/refresh`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refreshToken, userId: user.id }),
@@ -97,8 +98,8 @@ export const useAuthStore = create<AuthState>()(
         if (!token) return;
 
         try {
-          const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-          const response = await fetch(`${API_URL}/api/auth/me`, {
+          const apiUrl = getClientApiUrl();
+          const response = await fetch(`${apiUrl}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
