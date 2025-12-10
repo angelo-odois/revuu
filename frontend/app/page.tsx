@@ -7,6 +7,7 @@ import {
   BarChart3, Users, Code2, Smartphone, FileText,
   ChevronRight, Play, Check, X, Crown, Building2
 } from "lucide-react";
+import { AnimatedHero } from "@/components/landing/AnimatedHero";
 
 export const metadata: Metadata = {
   title: "Revuu - Crie seu Portfólio Profissional em Minutos",
@@ -73,102 +74,8 @@ export default function HomePage() {
         </nav>
       </header>
 
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center pt-20 pb-10 px-6 relative">
-        <div className="max-w-5xl mx-auto w-full text-center">
-          <div className="space-y-8">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-600 dark:text-amber-400 text-sm font-medium">
-              <Sparkles className="h-4 w-4" />
-              Novo: Templates de Portfolio para 2025
-            </div>
-
-            {/* Main Heading */}
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-              Crie seu portfólio
-              <br />
-              <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
-                em minutos
-              </span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-              A plataforma mais fácil para criar portfólios profissionais.
-              <span className="text-foreground font-medium"> Sem código</span>,
-              totalmente personalizável e pronto para impressionar recrutadores.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Link
-                href="/admin/register"
-                className="group relative inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium overflow-hidden transition-all hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105"
-              >
-                <span className="relative z-10">Criar Meu Portfólio Grátis</span>
-                <ArrowRight className="h-4 w-4 relative z-10 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </Link>
-              <Link
-                href="#como-funciona"
-                className="inline-flex items-center gap-2 px-6 py-4 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Play className="h-5 w-5" />
-                Ver como funciona
-              </Link>
-            </div>
-
-            {/* Social Proof */}
-            <div className="pt-8 flex flex-col items-center gap-4">
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 border-2 border-background flex items-center justify-center text-white text-xs font-bold"
-                  >
-                    {String.fromCharCode(64 + i)}
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} className="h-4 w-4 fill-amber-500 text-amber-500" />
-                  ))}
-                </div>
-                <span>Usado por <strong className="text-foreground">+2.500</strong> profissionais</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Hero Image/Preview */}
-          <div className="mt-16 relative">
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 pointer-events-none" />
-            <div className="relative rounded-xl border border-border/50 shadow-2xl shadow-amber-500/10 overflow-hidden bg-card">
-              <div className="h-8 bg-muted/50 flex items-center gap-2 px-4 border-b border-border/50">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <div className="px-4 py-1 bg-background rounded text-xs text-muted-foreground">
-                    revuu.com.br/seu-portfolio
-                  </div>
-                </div>
-              </div>
-              <div className="aspect-video bg-gradient-to-br from-muted/30 via-muted/10 to-transparent flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                    <Layout className="h-10 w-10 text-white" />
-                  </div>
-                  <p className="text-muted-foreground">Preview do Editor Visual</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Animated Hero Section */}
+      <AnimatedHero />
 
       {/* Logos/Companies Section */}
       <section className="py-16 px-6 border-y border-border/50 bg-muted/20">

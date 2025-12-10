@@ -56,10 +56,19 @@ export default function AdminPagesPage() {
   }, [search, pages]);
 
   const loadPages = async () => {
+    const { getValidToken } = useAuthStore.getState();
+    const token = await getValidToken();
+
+    if (!token) {
+      router.push("/admin");
+      return;
+    }
+
     try {
-      const allPages = await api.getPages();
-      const draftPages = await api.getPages("draft");
-      const combined = [...(allPages as Page[]), ...(draftPages as Page[])];
+      // Get user's own pages (both published and drafts)
+      const publishedPages = await api.getMyPages(token, "published");
+      const draftPages = await api.getMyPages(token, "draft");
+      const combined = [...(publishedPages as Page[]), ...(draftPages as Page[])];
       // Remove duplicates
       const unique = combined.filter(
         (page, index, self) => index === self.findIndex((p) => p.id === page.id)

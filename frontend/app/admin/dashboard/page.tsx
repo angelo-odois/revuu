@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
     try {
       const [pages, experiences, education, skills, projects, profile] =
         await Promise.all([
-          api.getPages().catch(() => []),
+          api.getMyPages(token).catch(() => []),
           api.getExperiences(token).catch(() => []),
           api.getEducation(token).catch(() => []),
           api.getSkills(token).catch(() => []),

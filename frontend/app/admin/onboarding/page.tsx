@@ -1,107 +1,156 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/lib/store";
-import { api } from "@/lib/api";
+import { api, PageTemplate } from "@/lib/api";
 import { ImageUpload } from "@/components/ui/image-upload";
 import {
-  User,
-  Briefcase,
-  GraduationCap,
-  Lightbulb,
+  Layout,
+  Palette,
+  Globe,
   ArrowRight,
   ArrowLeft,
   Check,
-  Plus,
-  X,
   Loader2,
+  Sparkles,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Profile {
+interface OnboardingData {
+  selectedTemplate: string | null;
   fullName: string;
-  title?: string;
-  bio?: string;
-  location?: string;
-  avatarUrl?: string;
-  contactEmail?: string;
-}
-
-interface Experience {
-  id?: string;
-  company: string;
-  position: string;
-  location?: string;
-  description?: string;
-  startDate: string;
-  endDate?: string;
-  isCurrent: boolean;
-}
-
-interface Education {
-  id?: string;
-  institution: string;
-  degree: string;
-  field?: string;
-  startDate: string;
-  endDate?: string;
-  isCurrent: boolean;
-}
-
-interface Skill {
-  id?: string;
-  name: string;
-  category: string;
-  level: string;
+  title: string;
+  bio: string;
+  avatarUrl: string;
+  username: string;
 }
 
 const steps = [
-  { id: "profile", title: "Perfil", icon: User },
-  { id: "experiences", title: "Experiencias", icon: Briefcase },
-  { id: "education", title: "Formacao", icon: GraduationCap },
-  { id: "skills", title: "Skills", icon: Lightbulb },
+  {
+    id: "template",
+    title: "Escolha seu template",
+    subtitle: "Templates otimizados para cada profissão",
+    icon: Layout,
+  },
+  {
+    id: "personalize",
+    title: "Personalize seu conteúdo",
+    subtitle: "Adicione suas informações básicas",
+    icon: Palette,
+  },
+  {
+    id: "publish",
+    title: "Publique e compartilhe",
+    subtitle: "Escolha seu link personalizado",
+    icon: Globe,
+  },
 ];
 
-const skillCategories = [
-  { value: "technical", label: "Tecnico" },
-  { value: "soft", label: "Soft Skill" },
-  { value: "language", label: "Idioma" },
-  { value: "tool", label: "Ferramenta" },
+// Fallback templates matching the landing page
+const defaultTemplates = [
+  {
+    id: "modern",
+    name: "Modern",
+    slug: "modern",
+    description: "Design limpo e moderno perfeito para designers",
+    category: "cv" as const,
+    profession: "Designer",
+    color: "from-amber-500/30 to-orange-500/20",
+  },
+  {
+    id: "classic",
+    name: "Classic",
+    slug: "classic",
+    description: "Layout clássico ideal para desenvolvedores",
+    category: "cv" as const,
+    profession: "Desenvolvedor",
+    color: "from-blue-500/30 to-cyan-500/20",
+  },
+  {
+    id: "terminal",
+    name: "Terminal",
+    slug: "terminal",
+    description: "Estilo terminal para devs e hackers",
+    category: "cv" as const,
+    profession: "Dev/Hacker",
+    color: "from-green-500/30 to-emerald-500/20",
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    slug: "minimal",
+    description: "Minimalista para destacar seu trabalho visual",
+    category: "cv" as const,
+    profession: "Fotógrafo",
+    color: "from-gray-400/30 to-slate-400/20",
+  },
+  {
+    id: "creative",
+    name: "Creative",
+    slug: "creative",
+    description: "Criativo e expressivo para artistas",
+    category: "cv" as const,
+    profession: "Artista",
+    color: "from-purple-500/30 to-pink-500/20",
+  },
+  {
+    id: "corporate",
+    name: "Corporate",
+    slug: "corporate",
+    description: "Profissional e sério para executivos",
+    category: "cv" as const,
+    profession: "Executivo",
+    color: "from-indigo-500/30 to-violet-500/20",
+  },
 ];
 
-const skillLevels = [
-  { value: "beginner", label: "Iniciante" },
-  { value: "intermediate", label: "Intermediario" },
-  { value: "advanced", label: "Avancado" },
-  { value: "expert", label: "Expert" },
-];
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5 },
+  },
+};
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { user, getValidToken, updateUser } = useAuthStore();
   const [currentStep, setCurrentStep] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [templates, setTemplates] = useState<PageTemplate[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(true);
+  const [usernameError, setUsernameError] = useState("");
+  const [checkingUsername, setCheckingUsername] = useState(false);
 
-  // Form states
-  const [profile, setProfile] = useState<Profile>({ fullName: "" });
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [education, setEducation] = useState<Education[]>([]);
-  const [skills, setSkills] = useState<Skill[]>([]);
-
-  // New item forms
-  const [newExperience, setNewExperience] = useState<Experience | null>(null);
-  const [newEducation, setNewEducation] = useState<Education | null>(null);
-  const [newSkill, setNewSkill] = useState<Skill | null>(null);
+  const [data, setData] = useState<OnboardingData>({
+    selectedTemplate: null,
+    fullName: "",
+    title: "",
+    bio: "",
+    avatarUrl: "",
+    username: "",
+  });
 
   useEffect(() => {
     if (!user) {
@@ -109,38 +158,149 @@ export default function OnboardingPage() {
     } else if (user.onboardingCompleted) {
       router.push("/admin/dashboard");
     } else {
-      // Initialize profile with user data
-      setProfile({ fullName: user.name, contactEmail: user.email });
+      setData((prev) => ({
+        ...prev,
+        fullName: user.name || "",
+        username: user.username || "",
+      }));
     }
   }, [user, router]);
+
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        const result = await api.getPageTemplates();
+        // If API returns templates, use them. Otherwise use defaults
+        if (result && result.length > 0) {
+          setTemplates(result);
+        }
+      } catch (error) {
+        console.error("Error loading templates:", error);
+      } finally {
+        setLoadingTemplates(false);
+      }
+    };
+    loadTemplates();
+  }, []);
+
+  // Check username availability
+  const checkUsername = async (username: string) => {
+    if (!username || username.length < 3) {
+      setUsernameError("");
+      return;
+    }
+
+    // Basic validation
+    if (!/^[a-z0-9_-]+$/.test(username)) {
+      setUsernameError("Use apenas letras minúsculas, números, - e _");
+      return;
+    }
+
+    setCheckingUsername(true);
+    try {
+      const token = await getValidToken();
+      if (!token) return;
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || ""}/api/users/check-username/${username}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const result = await response.json();
+
+      if (!result.available) {
+        setUsernameError("Este username já está em uso");
+      } else {
+        setUsernameError("");
+      }
+    } catch {
+      // If endpoint doesn't exist, assume available
+      setUsernameError("");
+    } finally {
+      setCheckingUsername(false);
+    }
+  };
 
   if (!user || user.onboardingCompleted) {
     return null;
   }
 
-  const handleNext = async () => {
-    setSaving(true);
-    const token = await getValidToken();
-    if (!token) return;
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0:
+        return data.selectedTemplate !== null;
+      case 1:
+        return data.fullName.trim() !== "";
+      case 2:
+        return data.username.trim() !== "" && !usernameError;
+      default:
+        return false;
+    }
+  };
 
-    try {
-      // Save current step data
-      if (currentStep === 0) {
-        await api.saveProfile(profile, token);
+  const handleNext = async () => {
+    if (!canProceed()) return;
+
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      // Complete onboarding
+      setSaving(true);
+      const token = await getValidToken();
+      if (!token) {
+        setSaving(false);
+        return;
       }
 
-      if (currentStep < steps.length - 1) {
-        setCurrentStep(currentStep + 1);
-      } else {
+      try {
+        // Save profile
+        await api.saveProfile(
+          {
+            fullName: data.fullName,
+            title: data.title,
+            bio: data.bio,
+            avatarUrl: data.avatarUrl,
+            template: data.selectedTemplate || undefined,
+          },
+          token
+        );
+
+        // Update username if provided
+        if (data.username) {
+          await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL || ""}/api/users/username`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ username: data.username }),
+            }
+          );
+        }
+
+        // Create initial page from template
+        if (data.selectedTemplate && data.selectedTemplate !== "blank") {
+          await api.createPageFromTemplate(
+            data.selectedTemplate,
+            `${data.fullName} - Portfólio`,
+            data.username || "home",
+            token
+          );
+        }
+
         // Complete onboarding
         await api.completeOnboarding(token);
-        updateUser({ onboardingCompleted: true });
+        updateUser({ onboardingCompleted: true, username: data.username });
+
         router.push("/admin/dashboard");
+      } catch (error) {
+        console.error("Error completing onboarding:", error);
+      } finally {
+        setSaving(false);
       }
-    } catch (error) {
-      console.error("Error saving:", error);
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -150,545 +310,301 @@ export default function OnboardingPage() {
     }
   };
 
-  // Experience handlers
-  const addExperience = async () => {
-    if (!newExperience) return;
-    const token = await getValidToken();
-    if (!token) return;
-
-    try {
-      const created = await api.createExperience(newExperience, token);
-      setExperiences([...experiences, created as Experience]);
-      setNewExperience(null);
-    } catch (error) {
-      console.error("Error creating experience:", error);
-    }
-  };
-
-  const removeExperience = async (id: string) => {
-    const token = await getValidToken();
-    if (!token) return;
-
-    try {
-      await api.deleteExperience(id, token);
-      setExperiences(experiences.filter(e => e.id !== id));
-    } catch (error) {
-      console.error("Error deleting experience:", error);
-    }
-  };
-
-  // Education handlers
-  const addEducation = async () => {
-    if (!newEducation) return;
-    const token = await getValidToken();
-    if (!token) return;
-
-    try {
-      const created = await api.createEducation(newEducation, token);
-      setEducation([...education, created as Education]);
-      setNewEducation(null);
-    } catch (error) {
-      console.error("Error creating education:", error);
-    }
-  };
-
-  const removeEducation = async (id: string) => {
-    const token = await getValidToken();
-    if (!token) return;
-
-    try {
-      await api.deleteEducation(id, token);
-      setEducation(education.filter(e => e.id !== id));
-    } catch (error) {
-      console.error("Error deleting education:", error);
-    }
-  };
-
-  // Skill handlers
-  const addSkill = async () => {
-    if (!newSkill) return;
-    const token = await getValidToken();
-    if (!token) return;
-
-    try {
-      const created = await api.createSkill(newSkill, token);
-      setSkills([...skills, created as Skill]);
-      setNewSkill(null);
-    } catch (error) {
-      console.error("Error creating skill:", error);
-    }
-  };
-
-  const removeSkill = async (id: string) => {
-    const token = await getValidToken();
-    if (!token) return;
-
-    try {
-      await api.deleteSkill(id, token);
-      setSkills(skills.filter(s => s.id !== id));
-    } catch (error) {
-      console.error("Error deleting skill:", error);
-    }
-  };
-
   const renderStep = () => {
     switch (currentStep) {
-      case 0: // Profile
+      case 0: // Template Selection
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold">Vamos comecar pelo seu perfil</h2>
-              <p className="text-muted-foreground mt-2">
-                Essas informacoes aparecerao no seu curriculo publico
+          <motion.div
+            key="template"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-8"
+          >
+            <motion.div variants={itemVariants} className="text-center">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
+                <Sparkles className="h-4 w-4" />
+                Passo 1 de 3
+              </span>
+              <h2 className="text-3xl font-bold mt-4">Escolha um template</h2>
+              <p className="text-muted-foreground mt-2 max-w-md mx-auto">
+                Templates profissionais otimizados para destacar seu trabalho
               </p>
-            </div>
+            </motion.div>
 
-            <div className="flex justify-center mb-6">
+            {loadingTemplates ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+              </div>
+            ) : (
+              <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {/* Use API templates if available, otherwise use defaults */}
+                {(templates.length > 0 ? templates : defaultTemplates).map((template) => {
+                  const defaultTemplate = defaultTemplates.find(t => t.slug === template.slug);
+                  const color = defaultTemplate?.color || "from-amber-500/30 to-orange-500/20";
+                  const profession = defaultTemplate?.profession || template.category;
+
+                  return (
+                    <motion.div
+                      key={template.id}
+                      whileHover={{ scale: 1.02, y: -4 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() =>
+                        setData({ ...data, selectedTemplate: template.slug })
+                      }
+                      className={cn(
+                        "relative cursor-pointer rounded-2xl border-2 overflow-hidden transition-all duration-300",
+                        data.selectedTemplate === template.slug
+                          ? "border-amber-500 ring-4 ring-amber-500/20"
+                          : "border-border/50 hover:border-amber-500/50"
+                      )}
+                    >
+                      <div className={`aspect-[4/3] bg-gradient-to-br ${color} relative`}>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center">
+                            <h3 className="font-bold text-xl mb-1">{template.name}</h3>
+                            <p className="text-sm text-muted-foreground">{profession}</p>
+                          </div>
+                        </div>
+                        {data.selectedTemplate === template.slug && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute top-3 right-3 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center shadow-lg"
+                          >
+                            <Check className="h-5 w-5 text-white" />
+                          </motion.div>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            )}
+          </motion.div>
+        );
+
+      case 1: // Personalization
+        return (
+          <motion.div
+            key="personalize"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-8 max-w-xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
+                <Palette className="h-4 w-4" />
+                Passo 2 de 3
+              </span>
+              <h2 className="text-3xl font-bold mt-4">Personalize seu conteúdo</h2>
+              <p className="text-muted-foreground mt-2">
+                Essas informações aparecerão no seu portfólio
+              </p>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="flex justify-center">
               <ImageUpload
-                value={profile.avatarUrl}
-                onChange={(url) => setProfile({ ...profile, avatarUrl: url })}
+                value={data.avatarUrl}
+                onChange={(url) => setData({ ...data, avatarUrl: url || "" })}
                 aspectRatio="square"
                 placeholder="Adicionar foto"
                 className="w-32 h-32 rounded-full"
               />
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <motion.div variants={itemVariants} className="space-y-4">
               <div className="space-y-2">
                 <Label>Nome Completo *</Label>
                 <Input
-                  value={profile.fullName}
-                  onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
+                  value={data.fullName}
+                  onChange={(e) => setData({ ...data, fullName: e.target.value })}
                   placeholder="Seu nome completo"
+                  className="h-12"
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Titulo Profissional</Label>
-                <Input
-                  value={profile.title || ""}
-                  onChange={(e) => setProfile({ ...profile, title: e.target.value })}
-                  placeholder="Ex: Product Designer"
-                />
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Bio</Label>
-              <Textarea
-                value={profile.bio || ""}
-                onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                placeholder="Conte um pouco sobre voce e sua carreira..."
-                rows={4}
-              />
-            </div>
+              <div className="space-y-2">
+                <Label>Título Profissional</Label>
+                <Input
+                  value={data.title}
+                  onChange={(e) => setData({ ...data, title: e.target.value })}
+                  placeholder="Ex: Product Designer, Full Stack Developer"
+                  className="h-12"
+                />
+              </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Localizacao</Label>
-                <Input
-                  value={profile.location || ""}
-                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-                  placeholder="Ex: Sao Paulo, Brasil"
+                <Label>Bio</Label>
+                <Textarea
+                  value={data.bio}
+                  onChange={(e) => setData({ ...data, bio: e.target.value })}
+                  placeholder="Conte um pouco sobre você e sua carreira..."
+                  rows={4}
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Email de Contato</Label>
-                <Input
-                  type="email"
-                  value={profile.contactEmail || ""}
-                  onChange={(e) => setProfile({ ...profile, contactEmail: e.target.value })}
-                  placeholder="contato@email.com"
-                />
+            </motion.div>
+
+            {/* Preview Card */}
+            <motion.div
+              variants={itemVariants}
+              className="p-6 bg-gradient-to-br from-amber-500/5 to-orange-500/5 border border-amber-500/20 rounded-xl"
+            >
+              <p className="text-xs text-muted-foreground mb-3">PREVIEW</p>
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center overflow-hidden">
+                  {data.avatarUrl ? (
+                    <Image
+                      src={data.avatarUrl}
+                      alt=""
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white text-xl font-bold">
+                      {data.fullName.charAt(0) || "?"}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">
+                    {data.fullName || "Seu Nome"}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {data.title || "Seu título profissional"}
+                  </p>
+                </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         );
 
-      case 1: // Experiences
+      case 2: // Publish
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold">Adicione suas experiencias</h2>
+          <motion.div
+            key="publish"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-8 max-w-xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
+                <Globe className="h-4 w-4" />
+                Passo 3 de 3
+              </span>
+              <h2 className="text-3xl font-bold mt-4">Publique e compartilhe</h2>
               <p className="text-muted-foreground mt-2">
-                Compartilhe sua trajetoria profissional
+                Escolha o link personalizado do seu portfólio
               </p>
-            </div>
+            </motion.div>
 
-            {/* List of added experiences */}
-            {experiences.length > 0 && (
-              <div className="space-y-3 mb-6">
-                {experiences.map((exp) => (
-                  <Card key={exp.id} className="relative">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-destructive"
-                      onClick={() => exp.id && removeExperience(exp.id)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    <CardContent className="pt-4">
-                      <p className="font-semibold">{exp.position}</p>
-                      <p className="text-sm text-muted-foreground">{exp.company}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {exp.startDate} - {exp.isCurrent ? "Atual" : exp.endDate}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-
-            {/* Add new experience form */}
-            {newExperience ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Nova Experiencia</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Empresa *</Label>
-                      <Input
-                        value={newExperience.company}
-                        onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
-                        placeholder="Nome da empresa"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Cargo *</Label>
-                      <Input
-                        value={newExperience.position}
-                        onChange={(e) => setNewExperience({ ...newExperience, position: e.target.value })}
-                        placeholder="Seu cargo"
-                      />
-                    </div>
+            <motion.div variants={itemVariants} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Seu link personalizado</Label>
+                <div className="flex items-stretch">
+                  <div className="flex items-center px-4 bg-muted border border-r-0 border-input rounded-l-md text-muted-foreground text-sm">
+                    revuu.com.br/
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Data de Inicio *</Label>
-                      <Input
-                        type="month"
-                        value={newExperience.startDate}
-                        onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Data de Termino</Label>
-                      <Input
-                        type="month"
-                        value={newExperience.endDate || ""}
-                        onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
-                        disabled={newExperience.isCurrent}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="current"
-                      checked={newExperience.isCurrent}
-                      onChange={(e) => setNewExperience({ ...newExperience, isCurrent: e.target.checked })}
-                      className="rounded"
-                    />
-                    <Label htmlFor="current" className="cursor-pointer">Trabalho atual</Label>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Descricao</Label>
-                    <Textarea
-                      value={newExperience.description || ""}
-                      onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
-                      placeholder="Descreva suas atividades e conquistas..."
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="flex gap-2 justify-end">
-                    <Button variant="outline" onClick={() => setNewExperience(null)}>
-                      Cancelar
-                    </Button>
-                    <Button
-                      onClick={addExperience}
-                      disabled={!newExperience.company || !newExperience.position || !newExperience.startDate}
-                    >
-                      Adicionar
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Button
-                variant="outline"
-                className="w-full h-12 border-dashed"
-                onClick={() => setNewExperience({
-                  company: "",
-                  position: "",
-                  startDate: "",
-                  isCurrent: false,
-                })}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar Experiencia
-              </Button>
-            )}
-
-            {experiences.length === 0 && !newExperience && (
-              <p className="text-center text-sm text-muted-foreground py-4">
-                Voce pode pular esta etapa e adicionar experiencias depois
-              </p>
-            )}
-          </div>
-        );
-
-      case 2: // Education
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold">Sua formacao</h2>
-              <p className="text-muted-foreground mt-2">
-                Adicione sua formacao academica e cursos
-              </p>
-            </div>
-
-            {/* List of added education */}
-            {education.length > 0 && (
-              <div className="space-y-3 mb-6">
-                {education.map((edu) => (
-                  <Card key={edu.id} className="relative">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-destructive"
-                      onClick={() => edu.id && removeEducation(edu.id)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    <CardContent className="pt-4">
-                      <p className="font-semibold">{edu.degree}</p>
-                      <p className="text-sm text-muted-foreground">{edu.institution}</p>
-                      {edu.field && <p className="text-sm text-muted-foreground">{edu.field}</p>}
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {edu.startDate} - {edu.isCurrent ? "Cursando" : edu.endDate}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-
-            {/* Add new education form */}
-            {newEducation ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Nova Formacao</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Instituicao *</Label>
-                      <Input
-                        value={newEducation.institution}
-                        onChange={(e) => setNewEducation({ ...newEducation, institution: e.target.value })}
-                        placeholder="Nome da instituicao"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Titulo/Grau *</Label>
-                      <Input
-                        value={newEducation.degree}
-                        onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
-                        placeholder="Ex: Bacharelado, MBA, Certificacao"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Area de Estudo</Label>
+                  <div className="relative flex-1">
                     <Input
-                      value={newEducation.field || ""}
-                      onChange={(e) => setNewEducation({ ...newEducation, field: e.target.value })}
-                      placeholder="Ex: Ciencia da Computacao"
+                      value={data.username}
+                      onChange={(e) => {
+                        const value = e.target.value.toLowerCase();
+                        setData({ ...data, username: value });
+                        checkUsername(value);
+                      }}
+                      placeholder="seu-nome"
+                      className="h-12 rounded-l-none"
                     />
+                    {checkingUsername && (
+                      <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                    )}
+                    {!checkingUsername &&
+                      data.username &&
+                      !usernameError &&
+                      data.username.length >= 3 && (
+                        <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                      )}
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Data de Inicio *</Label>
-                      <Input
-                        type="month"
-                        value={newEducation.startDate}
-                        onChange={(e) => setNewEducation({ ...newEducation, startDate: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Data de Termino</Label>
-                      <Input
-                        type="month"
-                        value={newEducation.endDate || ""}
-                        onChange={(e) => setNewEducation({ ...newEducation, endDate: e.target.value })}
-                        disabled={newEducation.isCurrent}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="current-edu"
-                      checked={newEducation.isCurrent}
-                      onChange={(e) => setNewEducation({ ...newEducation, isCurrent: e.target.checked })}
-                      className="rounded"
-                    />
-                    <Label htmlFor="current-edu" className="cursor-pointer">Cursando atualmente</Label>
-                  </div>
-
-                  <div className="flex gap-2 justify-end">
-                    <Button variant="outline" onClick={() => setNewEducation(null)}>
-                      Cancelar
-                    </Button>
-                    <Button
-                      onClick={addEducation}
-                      disabled={!newEducation.institution || !newEducation.degree || !newEducation.startDate}
-                    >
-                      Adicionar
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Button
-                variant="outline"
-                className="w-full h-12 border-dashed"
-                onClick={() => setNewEducation({
-                  institution: "",
-                  degree: "",
-                  startDate: "",
-                  isCurrent: false,
-                })}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar Formacao
-              </Button>
-            )}
-
-            {education.length === 0 && !newEducation && (
-              <p className="text-center text-sm text-muted-foreground py-4">
-                Voce pode pular esta etapa e adicionar formacao depois
-              </p>
-            )}
-          </div>
-        );
-
-      case 3: // Skills
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold">Suas habilidades</h2>
-              <p className="text-muted-foreground mt-2">
-                Adicione suas principais skills e competencias
-              </p>
-            </div>
-
-            {/* List of added skills */}
-            {skills.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
-                {skills.map((skill) => (
-                  <div
-                    key={skill.id}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 text-amber-600 rounded-full text-sm"
-                  >
-                    <span>{skill.name}</span>
-                    <button
-                      onClick={() => skill.id && removeSkill(skill.id)}
-                      className="hover:text-amber-800"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
+                </div>
+                {usernameError && (
+                  <p className="text-sm text-destructive">{usernameError}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Mínimo de 3 caracteres. Use apenas letras, números, - e _
+                </p>
               </div>
-            )}
+            </motion.div>
 
-            {/* Add new skill form */}
-            {newSkill ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Nova Skill</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Nome da Skill *</Label>
-                    <Input
-                      value={newSkill.name}
-                      onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
-                      placeholder="Ex: React, Lideranca, Ingles"
+            {/* Final Preview */}
+            <motion.div
+              variants={itemVariants}
+              className="relative overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl"
+            >
+              <div className="h-10 bg-muted/50 flex items-center gap-2 px-4 border-b border-border/50">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="px-4 py-1.5 bg-background rounded-lg text-xs text-muted-foreground">
+                    revuu.com.br/{data.username || "seu-nome"}
+                  </div>
+                </div>
+              </div>
+              <div className="p-8 text-center">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center overflow-hidden mb-4">
+                  {data.avatarUrl ? (
+                    <Image
+                      src={data.avatarUrl}
+                      alt=""
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-cover"
                     />
-                  </div>
+                  ) : (
+                    <span className="text-white text-2xl font-bold">
+                      {data.fullName.charAt(0) || "?"}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-2xl font-bold">
+                  {data.fullName || "Seu Nome"}
+                </h3>
+                <p className="text-muted-foreground mt-1">
+                  {data.title || "Seu título profissional"}
+                </p>
+                {data.bio && (
+                  <p className="text-sm text-muted-foreground mt-4 max-w-sm mx-auto">
+                    {data.bio}
+                  </p>
+                )}
+              </div>
+            </motion.div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Categoria</Label>
-                      <select
-                        value={newSkill.category}
-                        onChange={(e) => setNewSkill({ ...newSkill, category: e.target.value })}
-                        className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                      >
-                        {skillCategories.map((cat) => (
-                          <option key={cat.value} value={cat.value}>{cat.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Nivel</Label>
-                      <select
-                        value={newSkill.level}
-                        onChange={(e) => setNewSkill({ ...newSkill, level: e.target.value })}
-                        className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                      >
-                        {skillLevels.map((level) => (
-                          <option key={level.value} value={level.value}>{level.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 justify-end">
-                    <Button variant="outline" onClick={() => setNewSkill(null)}>
-                      Cancelar
-                    </Button>
-                    <Button
-                      onClick={addSkill}
-                      disabled={!newSkill.name}
-                    >
-                      Adicionar
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Button
-                variant="outline"
-                className="w-full h-12 border-dashed"
-                onClick={() => setNewSkill({
-                  name: "",
-                  category: "technical",
-                  level: "intermediate",
-                })}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar Skill
-              </Button>
-            )}
-
-            {skills.length === 0 && !newSkill && (
-              <p className="text-center text-sm text-muted-foreground py-4">
-                Voce pode pular esta etapa e adicionar skills depois
-              </p>
-            )}
-          </div>
+            {/* Success Message */}
+            <motion.div
+              variants={itemVariants}
+              className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
+            >
+              <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-green-600 dark:text-green-400">
+                  Pronto para publicar!
+                </p>
+                <p className="text-muted-foreground">
+                  Seu portfólio estará disponível em segundos.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
         );
 
       default:
@@ -698,9 +614,15 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-amber-500/10 opacity-20 blur-[100px]" />
+      </div>
+
       {/* Header */}
-      <div className="border-b bg-card">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="border-b bg-card/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <Image
             src="/revuuLogo.png"
             alt="Revuu"
@@ -708,15 +630,15 @@ export default function OnboardingPage() {
             height={32}
             className="dark:invert"
           />
-          <span className="text-sm text-muted-foreground">
-            Passo {currentStep + 1} de {steps.length}
-          </span>
+          <Button variant="ghost" size="sm" onClick={() => router.push("/admin")}>
+            Sair
+          </Button>
         </div>
       </div>
 
       {/* Progress Steps */}
-      <div className="border-b bg-card">
-        <div className="max-w-3xl mx-auto px-4 py-4">
+      <div className="border-b bg-card/50 backdrop-blur">
+        <div className="max-w-3xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => {
               const Icon = step.icon;
@@ -724,33 +646,46 @@ export default function OnboardingPage() {
               const isCompleted = index < currentStep;
 
               return (
-                <div key={step.id} className="flex items-center">
-                  <div className="flex flex-col items-center">
-                    <div
+                <div key={step.id} className="flex items-center flex-1">
+                  <div className="flex flex-col items-center flex-1">
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        scale: isActive ? 1.1 : 1,
+                        backgroundColor: isCompleted
+                          ? "rgb(34 197 94)"
+                          : isActive
+                          ? "rgb(245 158 11)"
+                          : "rgb(229 231 235)",
+                      }}
                       className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-                        isCompleted && "bg-green-500 text-white",
-                        isActive && "bg-amber-500 text-white",
-                        !isActive && !isCompleted && "bg-muted text-muted-foreground"
+                        "w-12 h-12 rounded-full flex items-center justify-center transition-colors",
+                        (isActive || isCompleted) && "text-white"
                       )}
                     >
                       {isCompleted ? (
-                        <Check className="h-5 w-5" />
+                        <Check className="h-6 w-6" />
                       ) : (
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-6 w-6" />
                       )}
-                    </div>
-                    <span className={cn(
-                      "text-xs mt-1 hidden sm:block",
-                      isActive ? "text-amber-500 font-medium" : "text-muted-foreground"
-                    )}>
+                    </motion.div>
+                    <span
+                      className={cn(
+                        "text-sm mt-2 text-center hidden sm:block",
+                        isActive
+                          ? "text-amber-500 font-medium"
+                          : isCompleted
+                          ? "text-green-500"
+                          : "text-muted-foreground"
+                      )}
+                    >
                       {step.title}
                     </span>
                   </div>
                   {index < steps.length - 1 && (
                     <div
                       className={cn(
-                        "h-0.5 w-8 sm:w-16 md:w-24 mx-2",
+                        "h-1 flex-1 mx-2 rounded-full transition-colors",
                         index < currentStep ? "bg-green-500" : "bg-muted"
                       )}
                     />
@@ -763,43 +698,48 @@ export default function OnboardingPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        {renderStep()}
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
 
         {/* Navigation */}
-        <div className="flex justify-between mt-8 pt-6 border-t">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-between mt-12 pt-6 border-t max-w-xl mx-auto"
+        >
           <Button
             variant="outline"
             onClick={handleBack}
             disabled={currentStep === 0 || saving}
+            className="gap-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4" />
             Voltar
           </Button>
 
           <Button
             onClick={handleNext}
-            disabled={saving || (currentStep === 0 && !profile.fullName)}
-            className="bg-amber-500 hover:bg-amber-600"
+            disabled={saving || !canProceed()}
+            className="bg-amber-500 hover:bg-amber-600 gap-2 min-w-[140px]"
           >
             {saving ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Salvando...
               </>
             ) : currentStep === steps.length - 1 ? (
               <>
-                Concluir
-                <Check className="h-4 w-4 ml-2" />
+                Publicar
+                <Check className="h-4 w-4" />
               </>
             ) : (
               <>
-                Proximo
-                <ArrowRight className="h-4 w-4 ml-2" />
+                Próximo
+                <ArrowRight className="h-4 w-4" />
               </>
             )}
           </Button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

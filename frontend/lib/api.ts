@@ -68,6 +68,9 @@ export const api = {
   getPages: (status?: string) =>
     fetchAPI<unknown[]>(`/api/pages${status ? `?status=${status}` : ""}`),
 
+  getMyPages: (token: string, status?: string) =>
+    fetchAPI<unknown[]>(`/api/pages/my${status ? `?status=${status}` : ""}`, { token }),
+
   getPage: (slug: string) =>
     fetchAPI(`/api/pages/${slug}`),
 

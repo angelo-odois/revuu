@@ -77,6 +77,40 @@ router.get(
 
 /**
  * @swagger
+ * /api/pages/my:
+ *   get:
+ *     summary: Get current user's pages (authenticated)
+ *     tags: [Pages]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get(
+  "/my",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const userId = req.user!.userId;
+    const { status } = req.query;
+
+    const whereCondition: Record<string, unknown> = {
+      createdBy: { id: userId },
+    };
+
+    if (status) {
+      whereCondition.status = status as PageStatus;
+    }
+
+    const pages = await pageRepository().find({
+      where: whereCondition,
+      select: ["id", "title", "slug", "seoTitle", "seoDescription", "ogImageUrl", "coverImageUrl", "status", "createdAt", "updatedAt"],
+      order: { createdAt: "DESC" },
+    });
+
+    res.json(pages);
+  })
+);
+
+/**
+ * @swagger
  * /api/pages/{slug}:
  *   get:
  *     summary: Get page by slug (public)
@@ -175,11 +209,21 @@ router.put(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { title, slug, seoTitle, seoDescription, ogImageUrl, coverImageUrl, contentJSON, status } = req.body;
+    const userId = req.user!.userId;
+    const userRole = req.user!.role;
 
-    const page = await pageRepository().findOne({ where: { id } });
+    const page = await pageRepository().findOne({
+      where: { id },
+      relations: ["createdBy"],
+    });
 
     if (!page) {
       throw new AppError("Page not found", 404);
+    }
+
+    // Check ownership (admins can edit any page)
+    if (userRole !== UserRole.ADMIN && page.createdBy?.id !== userId) {
+      throw new AppError("You don't have permission to edit this page", 403);
     }
 
     if (slug && slug !== page.slug) {
@@ -220,14 +264,23 @@ router.put(
  */
 router.delete(
   "/:id",
-  requireRole(UserRole.ADMIN),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
+    const userId = req.user!.userId;
+    const userRole = req.user!.role;
 
-    const page = await pageRepository().findOne({ where: { id } });
+    const page = await pageRepository().findOne({
+      where: { id },
+      relations: ["createdBy"],
+    });
 
     if (!page) {
       throw new AppError("Page not found", 404);
+    }
+
+    // Check ownership (admins can delete any page)
+    if (userRole !== UserRole.ADMIN && page.createdBy?.id !== userId) {
+      throw new AppError("You don't have permission to delete this page", 403);
     }
 
     await cache.del(`page:${page.slug}`);

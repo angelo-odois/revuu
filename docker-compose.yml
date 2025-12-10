@@ -18,6 +18,8 @@ services:
       - uploads:/data/uploads
     ports:
       - "${BACKEND_PORT:-3001}:3001"
+    networks:
+      - revuu-network
 
   frontend:
     build:
@@ -25,6 +27,9 @@ services:
       dockerfile: Dockerfile
     command: ["pnpm", "start"]
     environment:
+      # Internal URL for SSR (container-to-container)
+      INTERNAL_API_URL: http://backend:3001
+      # Public URL for client-side (browser) requests
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
       PORT: 3000
       NODE_ENV: production
@@ -32,6 +37,12 @@ services:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
       - backend
+    networks:
+      - revuu-network
+
+networks:
+  revuu-network:
+    driver: bridge
 
 volumes:
   uploads:

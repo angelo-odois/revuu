@@ -2,37 +2,34 @@
  * Server-side API configuration
  *
  * This file provides the correct API URL for server-side rendering (SSR).
- * In production, it uses the external API URL since the Next.js server
- * cannot access localhost:3001.
+ * In Docker/Coolify, use INTERNAL_API_URL for container-to-container communication.
  */
 
-// Production API URL - hardcoded because env vars may not be available at runtime
-const PRODUCTION_API_URL = "https://studio.odois.com.br";
 const DEVELOPMENT_API_URL = "http://localhost:3001";
 
 /**
  * Get the API URL for server-side requests
  *
  * Priority:
- * 1. INTERNAL_API_URL (for internal network communication)
+ * 1. INTERNAL_API_URL (for Docker internal network - set to http://backend:3001 in Coolify)
  * 2. NEXT_PUBLIC_API_URL (public API URL)
- * 3. Production URL if NODE_ENV is production
- * 4. Development URL as fallback
+ * 3. Development URL as fallback
+ *
+ * For Coolify deployment, set INTERNAL_API_URL=http://backend:3001 on the frontend service
  */
 export function getServerApiUrl(): string {
-  // First try environment variables
+  // For Docker/Coolify: use internal network URL
   if (process.env.INTERNAL_API_URL) {
     return process.env.INTERNAL_API_URL;
   }
 
+  // Public API URL (also works for SSR if backend is accessible)
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
 
-  // Detect production environment
-  const isProduction = process.env.NODE_ENV === "production";
-
-  return isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
+  // Fallback for local development
+  return DEVELOPMENT_API_URL;
 }
 
 /**
