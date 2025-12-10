@@ -1,46 +1,24 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import { ProfileImage } from "@/components/ProfileImage";
 import {
-  Linkedin, Mail, ExternalLink, MapPin,
-  ArrowDown, Sparkles, Palette, Briefcase, Rocket,
-  CheckCircle2, ArrowRight, Award,
-  Heart, Layers, BarChart3, Phone
+  ArrowRight, Sparkles, Palette, Briefcase, Rocket,
+  CheckCircle2, Star, Zap, Layout, Globe, Shield,
+  BarChart3, Users, Code2, Smartphone, FileText,
+  ChevronRight, Play, Check, X, Crown, Building2
 } from "lucide-react";
-import { getServerApiUrl } from "@/lib/server-api";
-
-interface PageItem {
-  id: string;
-  title: string;
-  slug: string;
-  seoDescription?: string;
-  ogImageUrl?: string;
-  coverImageUrl?: string;
-}
-
-async function getPages(): Promise<PageItem[]> {
-  try {
-    const API_URL = getServerApiUrl();
-    const res = await fetch(
-      `${API_URL}/api/pages`,
-      { next: { revalidate: 60 } }
-    );
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
 
 export const metadata: Metadata = {
-  title: "Angelo Pimentel - Product Designer | UX/UI | Power Platform",
-  description: "Portfolio de Angelo Pimentel, Product Designer com 7+ anos de experiência em UX/UI, Product Owner e Power Platform. Especialista em criar soluções digitais que geram resultados.",
+  title: "Revuu - Crie seu Portfólio Profissional em Minutos",
+  description: "A plataforma mais fácil para criar portfólios profissionais. Sem código, totalmente personalizável. Ideal para designers, desenvolvedores e criativos.",
+  openGraph: {
+    title: "Revuu - Crie seu Portfólio Profissional em Minutos",
+    description: "A plataforma mais fácil para criar portfólios profissionais. Sem código, totalmente personalizável.",
+    images: ["/og-image.png"],
+  },
 };
 
-export default async function HomePage() {
-  const pages = await getPages();
-
+export default function HomePage() {
   return (
     <main className="min-h-screen bg-background overflow-x-hidden">
       {/* Animated Background */}
@@ -54,7 +32,7 @@ export default async function HomePage() {
       {/* Header/Nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
         <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/revuuLogo.png"
               alt="Revuu"
@@ -65,294 +43,241 @@ export default async function HomePage() {
             />
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#sobre" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Sobre
+            <Link href="#recursos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Recursos
             </Link>
-            <Link href="#resultados" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Resultados
+            <Link href="#como-funciona" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Como Funciona
             </Link>
-            <Link href="#experiencia" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Experiência
+            <Link href="#templates" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Templates
             </Link>
-            <Link href="#projetos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Projetos
+            <Link href="#precos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Preços
             </Link>
           </div>
-          <a
-            href="https://wa.me/5561999911676?text=Ol%C3%A1%2C%20vim%20pelo%20seu%20portf%C3%B3lio!"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm px-4 py-2 bg-amber-500 text-white rounded-full hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
-          >
-            Contato
-          </a>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
+            >
+              Entrar
+            </Link>
+            <Link
+              href="/admin/register"
+              className="text-sm px-4 py-2 bg-amber-500 text-white rounded-full hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
+            >
+              Começar Grátis
+            </Link>
+          </div>
         </nav>
       </header>
 
       {/* Hero Section */}
       <section className="min-h-screen flex items-center justify-center pt-20 pb-10 px-6 relative">
-        <div className="max-w-6xl mx-auto w-full">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-            <div className="flex-1 space-y-8 text-center lg:text-left">
-              <div className="space-y-4">
-                <p className="text-lg text-muted-foreground">Olá, eu sou</p>
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-                  Angelo Pimentel
-                </h1>
-                <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
-                  Product Designer
-                </h2>
-              </div>
-
-              <p className="text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Uno <span className="text-foreground font-medium">UX, Produto e Tecnologia</span> para criar
-                <span className="text-foreground font-medium"> soluções digitais</span> que transformam a
-                experiência do usuário e geram resultados reais para o negócio.
-              </p>
-
-              {/* Stats */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 py-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-amber-500">7+</div>
-                  <div className="text-xs text-muted-foreground">Anos de Experiência</div>
-                </div>
-                <div className="w-px h-10 bg-border" />
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-amber-500">50+</div>
-                  <div className="text-xs text-muted-foreground">Projetos Entregues</div>
-                </div>
-                <div className="w-px h-10 bg-border" />
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-amber-500">5</div>
-                  <div className="text-xs text-muted-foreground">Empresas Atendidas</div>
-                </div>
-              </div>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-                <a
-                  href="https://wa.me/5561999911676?text=Ol%C3%A1%2C%20vim%20pelo%20seu%20portf%C3%B3lio!"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium overflow-hidden transition-all hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105"
-                >
-                  <span className="relative z-10">Iniciar Conversa</span>
-                  <ArrowRight className="h-4 w-4 relative z-10 group-hover:translate-x-1 transition-transform" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </a>
-                <a
-                  href="https://linkedin.com/in/ahspimentel"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-4 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Linkedin className="h-5 w-5" />
-                  Ver LinkedIn
-                </a>
-              </div>
-
-              {/* Tech stack */}
-              <div className="pt-8 border-t border-border/50">
-                <p className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">Especialidades</p>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  {["UX/UI Design", "Product Owner", "Power BI", "Figma", "Design System"].map((tech) => (
-                    <span key={tech} className="px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
+        <div className="max-w-5xl mx-auto w-full text-center">
+          <div className="space-y-8">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-600 dark:text-amber-400 text-sm font-medium">
+              <Sparkles className="h-4 w-4" />
+              Novo: Templates de Portfolio para 2025
             </div>
 
-            {/* Avatar com foto */}
-            <div className="relative flex flex-col items-center">
-              <div className="relative w-72 h-72 md:w-96 md:h-96">
-                {/* Animated rings */}
-                <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 animate-[spin_20s_linear_infinite]" />
-                <div className="absolute inset-4 rounded-full border-2 border-dashed border-orange-500/20 animate-[spin_15s_linear_infinite_reverse]" />
-                <div className="absolute inset-8 rounded-full border border-yellow-500/20 animate-[spin_25s_linear_infinite]" />
+            {/* Main Heading */}
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
+              Crie seu portfólio
+              <br />
+              <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
+                em minutos
+              </span>
+            </h1>
 
-                {/* Foto principal */}
-                <div className="absolute inset-12 rounded-full bg-gradient-to-br from-amber-500/20 via-orange-500/20 to-yellow-500/20 p-1">
-                  <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-background shadow-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                    <ProfileImage
-                      src="/images/angelo.jpg"
-                      alt="Angelo Pimentel - Product Designer"
-                      initials="AP"
-                      size="lg"
-                    />
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+              A plataforma mais fácil para criar portfólios profissionais.
+              <span className="text-foreground font-medium"> Sem código</span>,
+              totalmente personalizável e pronto para impressionar recrutadores.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <Link
+                href="/admin/register"
+                className="group relative inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium overflow-hidden transition-all hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105"
+              >
+                <span className="relative z-10">Criar Meu Portfólio Grátis</span>
+                <ArrowRight className="h-4 w-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </Link>
+              <Link
+                href="#como-funciona"
+                className="inline-flex items-center gap-2 px-6 py-4 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Play className="h-5 w-5" />
+                Ver como funciona
+              </Link>
+            </div>
+
+            {/* Social Proof */}
+            <div className="pt-8 flex flex-col items-center gap-4">
+              <div className="flex -space-x-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 border-2 border-background flex items-center justify-center text-white text-xs font-bold"
+                  >
+                    {String.fromCharCode(64 + i)}
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="h-4 w-4 fill-amber-500 text-amber-500" />
+                  ))}
+                </div>
+                <span>Usado por <strong className="text-foreground">+2.500</strong> profissionais</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero Image/Preview */}
+          <div className="mt-16 relative">
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 pointer-events-none" />
+            <div className="relative rounded-xl border border-border/50 shadow-2xl shadow-amber-500/10 overflow-hidden bg-card">
+              <div className="h-8 bg-muted/50 flex items-center gap-2 px-4 border-b border-border/50">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="px-4 py-1 bg-background rounded text-xs text-muted-foreground">
+                    revuu.com.br/seu-portfolio
                   </div>
                 </div>
-
-                {/* Floating badges */}
-                <div className="absolute -top-2 right-8 px-3 py-1.5 bg-card/90 backdrop-blur border border-border/50 rounded-full shadow-lg animate-bounce flex items-center gap-1">
-                  <Palette className="h-3 w-3 text-amber-500" />
-                  <span className="text-xs font-medium">UX Expert</span>
-                </div>
-                <div className="absolute top-1/4 -right-4 px-3 py-1.5 bg-card/90 backdrop-blur border border-border/50 rounded-full shadow-lg animate-bounce [animation-delay:0.5s] flex items-center gap-1">
-                  <BarChart3 className="h-3 w-3 text-orange-500" />
-                  <span className="text-xs font-medium">Power BI</span>
-                </div>
-                <div className="absolute bottom-1/4 -left-4 px-3 py-1.5 bg-card/90 backdrop-blur border border-border/50 rounded-full shadow-lg animate-bounce [animation-delay:1s] flex items-center gap-1">
-                  <Layers className="h-3 w-3 text-yellow-500" />
-                  <span className="text-xs font-medium">Design System</span>
-                </div>
               </div>
-
-              {/* Scroll indicator */}
-              <div className="mt-8 flex flex-col items-center gap-2 text-muted-foreground animate-bounce">
-                <span className="text-xs">Scroll para descobrir</span>
-                <ArrowDown className="h-4 w-4" />
+              <div className="aspect-video bg-gradient-to-br from-muted/30 via-muted/10 to-transparent flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                    <Layout className="h-10 w-10 text-white" />
+                  </div>
+                  <p className="text-muted-foreground">Preview do Editor Visual</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Logos/Companies Section */}
+      <section className="py-16 px-6 border-y border-border/50 bg-muted/20">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-center text-sm text-muted-foreground mb-8">
+            Profissionais de empresas como estas já usam o Revuu
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-50">
+            {["Google", "Microsoft", "Apple", "Meta", "Amazon", "Netflix"].map((company) => (
+              <div key={company} className="text-xl font-bold text-muted-foreground">
+                {company}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* About Section */}
-      <section id="sobre" className="py-32 px-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/30 to-transparent" />
-        <div className="max-w-6xl mx-auto relative">
+      {/* Features Section */}
+      <section id="recursos" className="py-32 px-6">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
-              Sobre Mim
+              Recursos
             </span>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              UX + Produto + <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Tecnologia</span>
+              Tudo que você precisa para
+              <br />
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                destacar sua carreira
+              </span>
             </h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
-              Um profissional que une design, usabilidade e análise de dados para criar soluções digitais completas e orientadas a resultados.
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Ferramentas poderosas para criar, personalizar e compartilhar seu portfólio profissional.
             </p>
           </div>
 
-          {/* Value Props */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: Palette,
-                title: "Design & UX",
-                description: "Pesquisa, prototipação de alta e baixa fidelidade, testes de usabilidade e Design Systems completos.",
+                icon: Layout,
+                title: "Editor Visual Drag & Drop",
+                description: "Arraste e solte blocos para criar páginas incríveis. Sem precisar escrever uma linha de código.",
                 color: "from-amber-500 to-yellow-500"
               },
               {
-                icon: Briefcase,
-                title: "Product Owner",
-                description: "Definição de requisitos, histórias de usuário, priorização de backlog e alinhamento com stakeholders.",
+                icon: Palette,
+                title: "Templates Profissionais",
+                description: "Escolha entre dezenas de templates prontos para designers, devs, marketers e mais.",
                 color: "from-orange-500 to-red-500"
               },
               {
-                icon: BarChart3,
-                title: "Power Platform",
-                description: "Power BI, Power Apps e Power Automate para dashboards, aplicações internas e automações.",
-                color: "from-yellow-500 to-amber-500"
+                icon: Globe,
+                title: "Domínio Personalizado",
+                description: "Use seu próprio domínio ou um subdomínio gratuito revuu.com.br/seu-nome.",
+                color: "from-blue-500 to-cyan-500"
               },
-            ].map((item) => (
+              {
+                icon: Smartphone,
+                title: "100% Responsivo",
+                description: "Seu portfólio fica perfeito em qualquer dispositivo - desktop, tablet ou mobile.",
+                color: "from-purple-500 to-pink-500"
+              },
+              {
+                icon: BarChart3,
+                title: "Analytics Integrado",
+                description: "Acompanhe visitas, cliques e métricas importantes do seu portfólio em tempo real.",
+                color: "from-green-500 to-emerald-500"
+              },
+              {
+                icon: Shield,
+                title: "SEO Otimizado",
+                description: "Meta tags, Open Graph e sitemap automáticos para você aparecer no Google.",
+                color: "from-indigo-500 to-violet-500"
+              },
+            ].map((feature) => (
               <div
-                key={item.title}
+                key={feature.title}
                 className="group p-8 bg-card/50 backdrop-blur border border-border/50 rounded-2xl hover:border-amber-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
               >
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${item.color} p-3.5 mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
-                  <item.icon className="w-full h-full text-white" />
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.color} p-3.5 mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                  <feature.icon className="w-full h-full text-white" />
                 </div>
-                <h3 className="font-bold text-xl mb-3">{item.title}</h3>
-                <p className="text-muted-foreground">{item.description}</p>
+                <h3 className="font-bold text-xl mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
               </div>
             ))}
           </div>
 
-          {/* Skills Grid */}
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold">Competências Técnicas</h3>
-              <div className="grid grid-cols-1 gap-4">
-                {[
-                  { category: "Design e Produto", skills: ["Pesquisa e testes", "Prototipação", "Design System", "Figma", "UX Writing"] },
-                  { category: "Power Platform", skills: ["Power BI (DAX e M)", "Power Apps", "Power Automate", "Soluções integradas"] },
-                  { category: "Programação", skills: ["JavaScript", "Angular", "React", "SQL", "Python"] },
-                ].map((group) => (
-                  <div key={group.category} className="p-4 bg-card/50 border border-border/50 rounded-xl">
-                    <h4 className="font-semibold text-amber-500 mb-2">{group.category}</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {group.skills.map((skill) => (
-                        <span key={skill} className="px-2 py-1 bg-muted rounded text-xs">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold">Habilidades</h3>
-              <ul className="space-y-4">
-                {[
-                  "Gestão Ágil e metodologias Scrum/Kanban",
-                  "Testes de Usabilidade e UX Research",
-                  "Definição de OKRs e métricas de sucesso",
-                  "Liderança de equipes e mentoria",
-                  "Comunicação com stakeholders",
-                  "Adaptabilidade e flexibilidade",
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
-                    <span className="text-muted-foreground">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Results/Testimonials Section */}
-      <section id="resultados" className="py-32 px-6 bg-muted/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
-              Resultados Reais
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Empresas onde <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">atuei</span>
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {[
-              { name: "Banco do Brasil", role: "Sênior UX Designer", period: "2022-2024" },
-              { name: "Coco Bambu", role: "Product Owner", period: "2019-2025" },
-              { name: "BCodex - Grupo Entre", role: "Product Designer", period: "2025" },
-              { name: "óDois Tecnologia", role: "Co-Founder", period: "2023-2025" },
-            ].map((company) => (
-              <div
-                key={company.name}
-                className="p-6 bg-card/50 backdrop-blur border border-border/50 rounded-2xl hover:border-amber-500/50 transition-all text-center"
-              >
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                  <Briefcase className="h-8 w-8 text-amber-500" />
-                </div>
-                <h3 className="font-bold text-lg">{company.name}</h3>
-                <p className="text-amber-500 text-sm font-medium">{company.role}</p>
-                <p className="text-xs text-muted-foreground mt-1">{company.period}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Key Achievements */}
-          <div className="p-8 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-yellow-500/10 rounded-2xl border border-amber-500/20">
-            <h3 className="text-xl font-bold text-center mb-8">Principais Entregas</h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+          {/* Extra Features List */}
+          <div className="mt-16 p-8 bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-yellow-500/5 rounded-2xl border border-amber-500/10">
+            <h3 className="text-xl font-bold mb-6 text-center">E muito mais...</h3>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { value: "App OuroCard", label: "Banco do Brasil - Novo app de cartões" },
-                { value: "App Coco Bambu", label: "Aplicativo de delivery e reservas" },
-                { value: "PixPay", label: "Sistema de pagamentos Pix" },
-                { value: "+100", label: "Fluxos e protótipos criados" },
-              ].map((metric) => (
-                <div key={metric.label}>
-                  <div className="text-2xl font-bold text-amber-500">{metric.value}</div>
-                  <div className="text-sm text-muted-foreground">{metric.label}</div>
+                "Blocos de formulário de contato",
+                "Galeria de imagens",
+                "Integração com YouTube/Vimeo",
+                "Depoimentos e testemunhos",
+                "Timeline de experiência",
+                "Grid de habilidades",
+                "Links para redes sociais",
+                "Modo escuro automático",
+                "Embed de Figma/Behance",
+                "Seções customizáveis",
+                "Backup automático",
+                "Exportar como PDF",
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span className="text-muted-foreground">{item}</span>
                 </div>
               ))}
             </div>
@@ -360,285 +285,477 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Experience Section */}
-      <section id="experiencia" className="py-32 px-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/30 to-transparent" />
-        <div className="max-w-4xl mx-auto relative">
+      {/* How It Works Section */}
+      <section id="como-funciona" className="py-32 px-6 bg-muted/20">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
-              Experiência
+              Como Funciona
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold">
-              Minha <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">trajetória</span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              3 passos para seu
+              <br />
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                portfólio profissional
+              </span>
             </h2>
           </div>
 
-          <div className="space-y-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                role: "Product Designer",
-                company: "BCodex - Grupo Entre",
-                period: "2025",
-                description: "Especialista de UX no desenvolvimento de aplicações financeiras como PixPay, APKDex e melhorias no Gateway Pay1. Liderança de Marketing e gestão de equipe de designers.",
-                achievements: ["PixPay", "APKDex", "Gateway Pay1", "Liderança de equipe"]
+                step: "01",
+                title: "Crie sua conta",
+                description: "Cadastre-se gratuitamente em menos de 30 segundos. Sem cartão de crédito.",
+                icon: Users
               },
               {
-                role: "Product Owner",
-                company: "Coco Bambu Restaurantes",
-                period: "2024 - 2025",
-                description: "Liderança de iniciativas com foco na eficiência operacional. Definição de especificações de negócio, histórias de usuário e alinhamento com stakeholders.",
-                achievements: ["Eficiência operacional", "Histórias de usuário", "Stakeholders"]
+                step: "02",
+                title: "Escolha um template",
+                description: "Selecione um dos nossos templates profissionais ou comece do zero.",
+                icon: FileText
               },
               {
-                role: "Sênior UX Designer",
-                company: "Banco do Brasil (via Coopersystem)",
-                period: "2022 - 2024",
-                description: "Especialista de UX no desenvolvimento do Novo APP OuroCard e App BB. UX Research, UX Writing, criação de fluxos e testes de usabilidade.",
-                achievements: ["App OuroCard", "App BB", "UX Research", "Testes de usabilidade"]
+                step: "03",
+                title: "Personalize e publique",
+                description: "Adicione seu conteúdo, personalize cores e publique com um clique.",
+                icon: Rocket
               },
-              {
-                role: "UI/UX Designer",
-                company: "Coco Bambu Restaurantes",
-                period: "2019 - 2023",
-                description: "Desenvolvimento de produtos digitais para o grupo. UX Discovery, pesquisas, prototipação, Design System e Style Guides.",
-                achievements: ["Design System", "UX Discovery", "Prototipação"]
-              },
-              {
-                role: "Co-Founder & Marketing",
-                company: "óDois Tecnologia",
-                period: "2023 - 2025",
-                description: "Planejamento e execução de estratégias de marketing. Campanhas digitais, conteúdo para mídias sociais e relacionamento com parceiros.",
-                achievements: ["Estratégia de marketing", "Mídias sociais", "Parcerias"]
-              },
-            ].map((exp) => (
-              <div
-                key={`${exp.role}-${exp.company}`}
-                className="group p-6 bg-card/50 backdrop-blur border border-border/50 rounded-2xl hover:border-amber-500/50 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold group-hover:text-amber-500 transition-colors">
-                      {exp.role}
-                    </h3>
-                    <p className="text-amber-500/80 font-medium">{exp.company}</p>
+            ].map((item, index) => (
+              <div key={item.step} className="relative">
+                {index < 2 && (
+                  <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-amber-500/50 to-transparent -translate-x-8 z-0" />
+                )}
+                <div className="relative z-10 text-center">
+                  <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                      <item.icon className="h-10 w-10 text-white" />
+                    </div>
                   </div>
-                  <span className="px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium">
-                    {exp.period}
-                  </span>
-                </div>
-                <p className="text-muted-foreground mb-4">{exp.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {exp.achievements.map((achievement) => (
-                    <span key={achievement} className="px-3 py-1 bg-muted rounded-full text-xs font-medium">
-                      {achievement}
-                    </span>
-                  ))}
+                  <div className="text-amber-500 font-bold text-sm mb-2">PASSO {item.step}</div>
+                  <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.description}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Education */}
-          <div className="mt-12 p-6 bg-card/50 border border-border/50 rounded-2xl">
-            <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-              <Award className="h-5 w-5 text-amber-500" />
-              Formação
-            </h3>
-            <div>
-              <p className="font-medium">Design Gráfico</p>
-              <p className="text-muted-foreground">UDF - Centro Universitário | 2016 - 2018</p>
-              <p className="text-sm text-muted-foreground">Brasília - DF</p>
-            </div>
+          <div className="mt-16 text-center">
+            <Link
+              href="/admin/register"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all"
+            >
+              Começar Agora - É Grátis
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Projects Section */}
-      <section id="projetos" className="py-32 px-6">
+      {/* Templates Section */}
+      <section id="templates" className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
-              Projetos
+              Templates
             </span>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Trabalhos <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">recentes</span>
+              Templates para cada
+              <br />
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                tipo de profissional
+              </span>
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore projetos e páginas criadas com o editor visual
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Escolha entre templates otimizados para diferentes áreas de atuação.
             </p>
           </div>
 
-          {pages.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pages.map((page) => (
-                <Link
-                  key={page.id}
-                  href={`/${page.slug}`}
-                  className="group relative bg-card/50 backdrop-blur border border-border/50 rounded-2xl hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden"
-                >
-                  {/* Cover Image */}
-                  <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-yellow-500/20">
-                    {(page.coverImageUrl || page.ogImageUrl) ? (
-                      <img
-                        src={page.coverImageUrl || page.ogImageUrl}
-                        alt={page.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center">
-                          <Rocket className="h-8 w-8 text-amber-500/70" />
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />
-                    <div className="absolute top-3 right-3">
-                      <ExternalLink className="h-5 w-5 text-white/70 group-hover:text-amber-400 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all drop-shadow-lg" />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5">
-                    <h3 className="font-bold text-lg mb-2 group-hover:text-amber-500 transition-colors line-clamp-1">
-                      {page.title}
-                    </h3>
-                    {page.seoDescription && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                        {page.seoDescription}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span className="px-2 py-1 bg-muted/50 rounded">/{page.slug}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16 bg-card/30 backdrop-blur border border-border/50 rounded-2xl">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <Rocket className="h-8 w-8 text-amber-500" />
-              </div>
-              <p className="text-muted-foreground mb-6">
-                Nenhuma página publicada ainda
-              </p>
-              <Link
-                href="/admin"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-full font-medium hover:shadow-lg hover:shadow-amber-500/25 transition-all"
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: "Modern", category: "Designer", color: "from-amber-500 to-orange-500" },
+              { name: "Classic", category: "Desenvolvedor", color: "from-blue-500 to-cyan-500" },
+              { name: "Terminal", category: "Dev/Hacker", color: "from-green-500 to-emerald-500" },
+              { name: "Minimal", category: "Fotógrafo", color: "from-gray-500 to-slate-500" },
+              { name: "Creative", category: "Artista", color: "from-purple-500 to-pink-500" },
+              { name: "Corporate", category: "Executivo", color: "from-indigo-500 to-violet-500" },
+            ].map((template) => (
+              <div
+                key={template.name}
+                className="group relative bg-card/50 border border-border/50 rounded-2xl overflow-hidden hover:border-amber-500/50 hover:shadow-xl transition-all duration-300"
               >
-                <Sparkles className="h-4 w-4" />
-                Criar primeira página
+                <div className={`h-48 bg-gradient-to-br ${template.color} opacity-20`} />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <h3 className="font-bold text-xl mb-1">{template.name}</h3>
+                    <p className="text-sm text-muted-foreground">{template.category}</p>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Link
+                    href="/admin/register"
+                    className="px-6 py-3 bg-white text-black rounded-full font-medium hover:scale-105 transition-transform"
+                  >
+                    Usar Template
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="precos" className="py-32 px-6 bg-muted/20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
+              Preços
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Planos para cada
+              <br />
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                momento da sua carreira
+              </span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Comece grátis e evolua conforme sua necessidade.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Free Plan */}
+            <div className="p-8 bg-card/50 border border-border/50 rounded-2xl">
+              <div className="mb-6">
+                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-4">
+                  <Zap className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-bold">Grátis</h3>
+                <p className="text-sm text-muted-foreground">Para começar sua jornada</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">R$ 0</span>
+                <span className="text-muted-foreground">/mês</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {[
+                  { included: true, text: "1 portfólio" },
+                  { included: true, text: "Subdomínio revuu.com.br" },
+                  { included: true, text: "Templates básicos" },
+                  { included: true, text: "Editor visual completo" },
+                  { included: true, text: "Analytics básico" },
+                  { included: false, text: "Domínio personalizado" },
+                  { included: false, text: "Remover branding Revuu" },
+                  { included: false, text: "Suporte prioritário" },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    {item.included ? (
+                      <Check className="h-4 w-4 text-green-500 shrink-0" />
+                    ) : (
+                      <X className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+                    )}
+                    <span className={item.included ? "" : "text-muted-foreground/50"}>
+                      {item.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/admin/register"
+                className="block w-full py-3 text-center border border-border rounded-full font-medium hover:bg-muted transition-colors"
+              >
+                Começar Grátis
               </Link>
             </div>
-          )}
+
+            {/* Pro Plan - Highlighted */}
+            <div className="p-8 bg-gradient-to-b from-amber-500/10 to-orange-500/5 border-2 border-amber-500/50 rounded-2xl relative">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <span className="px-4 py-1 bg-amber-500 text-white text-sm font-medium rounded-full">
+                  Mais Popular
+                </span>
+              </div>
+              <div className="mb-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4">
+                  <Crown className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold">Pro</h3>
+                <p className="text-sm text-muted-foreground">Para profissionais sérios</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">R$ 29</span>
+                <span className="text-muted-foreground">/mês</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {[
+                  { included: true, text: "5 portfólios" },
+                  { included: true, text: "Domínio personalizado" },
+                  { included: true, text: "Todos os templates" },
+                  { included: true, text: "Analytics avançado" },
+                  { included: true, text: "Remover branding Revuu" },
+                  { included: true, text: "Formulário de contato" },
+                  { included: true, text: "Suporte prioritário" },
+                  { included: true, text: "Exportar para PDF" },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Check className="h-4 w-4 text-amber-500 shrink-0" />
+                    <span>{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/admin/register?plan=pro"
+                className="block w-full py-3 text-center bg-amber-500 text-white rounded-full font-medium hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/25 transition-all"
+              >
+                Começar Pro
+              </Link>
+            </div>
+
+            {/* Business Plan */}
+            <div className="p-8 bg-card/50 border border-border/50 rounded-2xl">
+              <div className="mb-6">
+                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-4">
+                  <Building2 className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-bold">Business</h3>
+                <p className="text-sm text-muted-foreground">Para times e empresas</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">R$ 99</span>
+                <span className="text-muted-foreground">/mês</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {[
+                  { included: true, text: "Portfólios ilimitados" },
+                  { included: true, text: "Múltiplos domínios" },
+                  { included: true, text: "Templates exclusivos" },
+                  { included: true, text: "Analytics de equipe" },
+                  { included: true, text: "White-label completo" },
+                  { included: true, text: "API de integração" },
+                  { included: true, text: "Suporte dedicado" },
+                  { included: true, text: "Treinamento incluso" },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Check className="h-4 w-4 text-green-500 shrink-0" />
+                    <span>{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/admin/register?plan=business"
+                className="block w-full py-3 text-center border border-border rounded-full font-medium hover:bg-muted transition-colors"
+              >
+                Falar com Vendas
+              </Link>
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground mt-8">
+            Todos os planos incluem SSL grátis, backups diários e 99.9% de uptime.
+          </p>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contato" className="py-32 px-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/30 to-transparent" />
-        <div className="max-w-4xl mx-auto text-center relative">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Vamos criar algo <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">incrível</span> juntos?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-4 max-w-xl mx-auto">
-            Estou aberto a discutir novos projetos, oportunidades de trabalho ou colaborações em UX/UI e Produto.
-          </p>
-          <p className="text-sm text-muted-foreground mb-10 flex items-center justify-center gap-2">
-            <MapPin className="h-4 w-4 text-amber-500" />
-            Brasília - DF, Brasil
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <a
-              href="https://wa.me/5561999911676?text=Ol%C3%A1%2C%20vim%20pelo%20seu%20portf%C3%B3lio!"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all"
-            >
-              <Phone className="h-5 w-5" />
-              Falar no WhatsApp
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a
-              href="mailto:ahspimentel@gmail.com"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-card/50 border border-border/50 rounded-full font-medium hover:bg-muted hover:border-amber-500/50 transition-all"
-            >
-              <Mail className="h-5 w-5" />
-              ahspimentel@gmail.com
-            </a>
+      {/* Testimonials Section */}
+      <section className="py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
+              Depoimentos
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              O que nossos usuários
+              <br />
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                estão dizendo
+              </span>
+            </h2>
           </div>
 
-          <div className="flex justify-center gap-4">
-            <a
-              href="https://linkedin.com/in/ahspimentel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-card/50 border border-border/50 rounded-full font-medium hover:bg-muted hover:border-amber-500/50 transition-all"
-            >
-              <Linkedin className="h-5 w-5" />
-              LinkedIn
-            </a>
-            <a
-              href="https://behance.net/ahspimentel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-card/50 border border-border/50 rounded-full font-medium hover:bg-muted hover:border-amber-500/50 transition-all"
-            >
-              <Palette className="h-5 w-5" />
-              Behance
-            </a>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Marina Silva",
+                role: "UX Designer @ Google",
+                text: "O Revuu me ajudou a criar um portfólio que realmente destaca meu trabalho. Recebi 3 propostas de emprego em 2 semanas!",
+                avatar: "MS"
+              },
+              {
+                name: "Carlos Eduardo",
+                role: "Dev Full Stack",
+                text: "Finalmente um builder que não parece genérico. O template Terminal é perfeito para devs como eu.",
+                avatar: "CE"
+              },
+              {
+                name: "Ana Paula",
+                role: "Product Manager",
+                text: "Construí meu portfólio em 30 minutos. A integração com Analytics me ajuda a entender quem está vendo meu perfil.",
+                avatar: "AP"
+              },
+            ].map((testimonial) => (
+              <div
+                key={testimonial.name}
+                className="p-6 bg-card/50 border border-border/50 rounded-2xl"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="h-4 w-4 fill-amber-500 text-amber-500" />
+                  ))}
+                </div>
+                <p className="text-muted-foreground mb-6">&ldquo;{testimonial.text}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm">
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <div className="font-medium">{testimonial.name}</div>
+                    <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Revuu CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent border-t border-border/50">
+      {/* FAQ Section */}
+      <section className="py-32 px-6 bg-muted/20">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
+              FAQ
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold">
+              Perguntas Frequentes
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "Preciso saber programar para usar o Revuu?",
+                a: "Não! O Revuu foi criado para ser 100% visual. Você arrasta e solta blocos para criar seu portfólio, sem precisar escrever nenhum código."
+              },
+              {
+                q: "Posso usar meu próprio domínio?",
+                a: "Sim! No plano Pro e Business você pode conectar seu próprio domínio. No plano gratuito, você recebe um subdomínio gratuito (seuname.revuu.com.br)."
+              },
+              {
+                q: "Quanto tempo leva para criar um portfólio?",
+                a: "A maioria dos usuários cria seu primeiro portfólio em menos de 30 minutos. Com nossos templates, você pode ter algo pronto em 5 minutos."
+              },
+              {
+                q: "Posso cancelar a qualquer momento?",
+                a: "Sim! Não há contratos de longo prazo. Você pode cancelar sua assinatura a qualquer momento e continuar usando até o fim do período pago."
+              },
+              {
+                q: "O Revuu funciona bem no celular?",
+                a: "Sim! Todos os portfólios criados no Revuu são 100% responsivos e ficam perfeitos em qualquer dispositivo."
+              },
+            ].map((faq, i) => (
+              <div
+                key={i}
+                className="p-6 bg-card/50 border border-border/50 rounded-xl"
+              >
+                <h3 className="font-bold mb-2 flex items-start gap-3">
+                  <ChevronRight className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                  {faq.q}
+                </h3>
+                <p className="text-muted-foreground pl-8">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-32 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-600 dark:text-amber-400 text-sm font-medium mb-6">
             <Sparkles className="h-4 w-4" />
-            Powered by Revuu
+            Comece grátis, sem cartão de crédito
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Quer um portfólio como este?
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+            Pronto para destacar
+            <br />
+            <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+              sua carreira?
+            </span>
           </h2>
 
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Crie seu portfólio profissional em minutos com o <span className="text-amber-500 font-semibold">Revuu</span>.
-            Sem código, totalmente personalizável e pronto para impressionar recrutadores.
+          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+            Junte-se a milhares de profissionais que já estão usando o Revuu para conquistar as melhores oportunidades.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/admin"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-500 text-white rounded-full font-medium hover:bg-amber-600 hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all"
+              href="/admin/register"
+              className="group inline-flex items-center justify-center gap-2 px-10 py-5 bg-amber-500 text-white rounded-full font-medium text-lg hover:bg-amber-600 hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all"
             >
-              Criar meu Revuu grátis
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              Criar Meu Portfólio Grátis
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
           <p className="mt-6 text-sm text-muted-foreground">
-            Já usado por <span className="text-foreground font-medium">+500 profissionais</span> para destacar suas carreiras
+            Setup em menos de 2 minutos • Cancele quando quiser • Suporte em português
           </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-border/50">
+      <footer className="py-16 px-6 border-t border-border/50">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/revuuLogo.png"
-              alt="Revuu"
-              width={100}
-              height={32}
-              className="h-6 w-auto mb-3 opacity-70"
-            />
-            <p className="text-sm text-muted-foreground text-center max-w-md">
-              A plataforma para profissionais criarem portfólios que convertem.
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            <div className="md:col-span-2">
+              <Image
+                src="/revuuLogo.png"
+                alt="Revuu"
+                width={120}
+                height={40}
+                className="h-8 w-auto mb-4"
+              />
+              <p className="text-muted-foreground max-w-md">
+                A plataforma mais fácil para criar portfólios profissionais. Destaque sua carreira e conquiste as melhores oportunidades.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4">Produto</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="#recursos" className="hover:text-foreground transition-colors">Recursos</Link></li>
+                <li><Link href="#templates" className="hover:text-foreground transition-colors">Templates</Link></li>
+                <li><Link href="#precos" className="hover:text-foreground transition-colors">Preços</Link></li>
+                <li><Link href="/admin" className="hover:text-foreground transition-colors">Entrar</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4">Suporte</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="#" className="hover:text-foreground transition-colors">Central de Ajuda</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Contato</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Termos de Uso</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Privacidade</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              © 2025 Revuu. Todos os direitos reservados.
             </p>
+            <div className="flex items-center gap-4 text-muted-foreground">
+              <Link href="#" className="hover:text-foreground transition-colors">
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+              </Link>
+              <Link href="#" className="hover:text-foreground transition-colors">
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              </Link>
+              <Link href="#" className="hover:text-foreground transition-colors">
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
