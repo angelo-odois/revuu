@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 @Entity("experiences")
 export class Experience {
@@ -54,7 +54,7 @@ export class Experience {
   @Column({ type: "uuid", name: "user_id" })
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.experiences)
+  @ManyToOne("User", "experiences")
   @JoinColumn({ name: "user_id" })
   user!: User;
 

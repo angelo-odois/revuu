@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 @Entity("assets")
 export class Asset {
@@ -28,7 +28,7 @@ export class Asset {
   @Column({ type: "varchar", name: "thumbnail_url", length: 500, nullable: true })
   thumbnailUrl?: string;
 
-  @ManyToOne(() => User, (user) => user.assets, { nullable: true })
+  @ManyToOne("User", "assets", { nullable: true })
   @JoinColumn({ name: "uploaded_by" })
   uploadedBy?: User;
 

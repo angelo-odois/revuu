@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 export enum SkillCategory {
   TECHNICAL = "technical",
@@ -59,7 +59,7 @@ export class Skill {
   @Column({ type: "uuid", name: "user_id" })
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.skills)
+  @ManyToOne("User", "skills")
   @JoinColumn({ name: "user_id" })
   user!: User;
 

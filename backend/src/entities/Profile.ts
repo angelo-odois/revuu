@@ -7,7 +7,7 @@ import {
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 @Entity("profiles")
 export class Profile {
@@ -85,7 +85,7 @@ export class Profile {
   @Column({ type: "uuid", name: "user_id" })
   userId!: string;
 
-  @OneToOne(() => User, (user) => user.profile)
+  @OneToOne("User", "profile")
   @JoinColumn({ name: "user_id" })
   user!: User;
 

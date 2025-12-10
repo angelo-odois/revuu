@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 export enum ProjectStatus {
   IN_PROGRESS = "in_progress",
@@ -73,7 +73,7 @@ export class Project {
   @Column({ type: "uuid", name: "user_id" })
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.projects)
+  @ManyToOne("User", "projects")
   @JoinColumn({ name: "user_id" })
   user!: User;
 

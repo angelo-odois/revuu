@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 @Entity("educations")
 export class Education {
@@ -51,7 +51,7 @@ export class Education {
   @Column({ type: "uuid", name: "user_id" })
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.educations)
+  @ManyToOne("User", "educations")
   @JoinColumn({ name: "user_id" })
   user!: User;
 

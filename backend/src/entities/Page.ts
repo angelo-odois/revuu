@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 export enum PageStatus {
   DRAFT = "draft",
@@ -61,7 +61,7 @@ export class Page {
   })
   status!: PageStatus;
 
-  @ManyToOne(() => User, (user) => user.pages, { nullable: true })
+  @ManyToOne("User", "pages", { nullable: true })
   @JoinColumn({ name: "created_by" })
   createdBy?: User;
 
