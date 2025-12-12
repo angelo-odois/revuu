@@ -109,15 +109,20 @@ export default function SubscriptionPage() {
 
     setUpgrading(planId);
     try {
-      await api.upgradePlan(planId, token);
-      updateUser({ plan: planId as UserPlan });
+      const response = await api.upgradePlan(planId, token) as { url: string; portal?: boolean };
+
+      // Redirect to Stripe checkout or portal
+      if (response.url) {
+        window.location.href = response.url;
+        return;
+      }
+
+      // If no URL returned (shouldn't happen), reload data
       await loadData();
-      toast({ title: "Plano atualizado com sucesso!", variant: "success" });
     } catch (error: unknown) {
       console.error("Failed to upgrade:", error);
       const err = error as { message?: string };
       toast({ title: err.message || "Erro ao fazer upgrade", variant: "destructive" });
-    } finally {
       setUpgrading(null);
     }
   };
@@ -134,6 +139,22 @@ export default function SubscriptionPage() {
       console.error("Failed to cancel:", error);
       const err = error as { message?: string };
       toast({ title: err.message || "Erro ao cancelar", variant: "destructive" });
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    const token = await getValidToken();
+    if (!token) return;
+
+    try {
+      const response = await api.openPortal(token);
+      if (response.url) {
+        window.location.href = response.url;
+      }
+    } catch (error: unknown) {
+      console.error("Failed to open portal:", error);
+      const err = error as { message?: string };
+      toast({ title: err.message || "Erro ao abrir portal", variant: "destructive" });
     }
   };
 
@@ -190,7 +211,7 @@ export default function SubscriptionPage() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground">Portfolios</p>
+                <p className="text-sm text-muted-foreground">Projetos</p>
                 <p className="text-2xl font-bold">
                   {subscription?.usage.portfolios || 0}
                   <span className="text-sm font-normal text-muted-foreground">
@@ -227,7 +248,10 @@ export default function SubscriptionPage() {
             </div>
 
             {currentPlan !== "free" && subscription?.status === "active" && (
-              <div className="mt-4 pt-4 border-t">
+              <div className="mt-4 pt-4 border-t flex gap-2">
+                <Button variant="default" size="sm" onClick={handleManageSubscription}>
+                  Gerenciar assinatura
+                </Button>
                 <Button variant="outline" size="sm" onClick={handleCancel}>
                   Cancelar assinatura
                 </Button>
@@ -285,7 +309,7 @@ export default function SubscriptionPage() {
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-green-500" />
-                        {plan.maxPortfolios === -1 ? "Portfolios ilimitados" : `${plan.maxPortfolios} portfolio${plan.maxPortfolios > 1 ? "s" : ""}`}
+                        {plan.maxPortfolios === -1 ? "Projetos ilimitados" : `${plan.maxPortfolios} projeto${plan.maxPortfolios > 1 ? "s" : ""}`}
                       </li>
                       <li className="flex items-center gap-2">
                         {plan.hasCustomDomain ? (

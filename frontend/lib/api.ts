@@ -361,6 +361,12 @@ export const api = {
       token,
     }),
 
+  openPortal: (token: string) =>
+    fetchAPI<{ url: string }>("/api/subscription/portal", {
+      method: "POST",
+      token,
+    }),
+
   getFeatures: (token: string) =>
     fetchAPI("/api/subscription/features", { token }),
 };
