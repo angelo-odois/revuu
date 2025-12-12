@@ -232,15 +232,14 @@ export function AdminSidebar() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium truncate">{user.name || "Usuario"}</p>
-                  {user.plan && user.plan !== "free" && (
-                    <Badge variant="outline" className={cn(
-                      "text-[10px] px-1.5 py-0",
-                      user.plan === "pro" && "border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-950",
-                      user.plan === "business" && "border-amber-500 text-amber-600 bg-amber-50 dark:bg-amber-950"
-                    )}>
-                      {user.plan.toUpperCase()}
-                    </Badge>
-                  )}
+                  <Badge variant="outline" className={cn(
+                    "text-[10px] px-1.5 py-0 shrink-0",
+                    (!user.plan || user.plan === "free") && "border-gray-400 text-gray-500 bg-gray-50 dark:bg-gray-900",
+                    user.plan === "pro" && "border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-950",
+                    user.plan === "business" && "border-amber-500 text-amber-600 bg-amber-50 dark:bg-amber-950"
+                  )}>
+                    {user.plan === "pro" ? "PRO" : user.plan === "business" ? "BUSINESS" : "GRATIS"}
+                  </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground truncate">
                   {user.email}
