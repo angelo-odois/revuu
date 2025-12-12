@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import swaggerUi from "swagger-ui-express";
 import { AppDataSource } from "./data-source.js";
 import routes from "./routes/index.js";
+import webhooksRoutes from "./routes/webhooks.js";
 import { errorHandler, notFoundHandler, requestIdMiddleware } from "./middlewares/errorHandler.js";
 import { swaggerSpec } from "./swagger.js";
 
@@ -48,6 +49,9 @@ app.use(cors({
 // Request ID middleware for error tracking
 app.use(requestIdMiddleware);
 
+// Stripe webhooks need raw body for signature verification - MUST be before express.json()
+app.use("/api/webhooks/stripe", express.raw({ type: "application/json" }));
+
 // Body parsing
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -60,6 +64,9 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // API routes
 app.use("/api", routes);
+
+// Webhook routes (separate from main routes due to raw body requirement)
+app.use("/api/webhooks", webhooksRoutes);
 
 // Health check
 app.get("/health", (_req, res) => {
