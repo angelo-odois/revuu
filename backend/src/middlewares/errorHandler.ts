@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ErrorCodes, ErrorCode, ErrorInfo, getErrorInfo } from "../errors/codes.js";
+import { ErrorCodes, ErrorCode, getErrorInfo } from "../errors/codes.js";
 
 export class AppError extends Error {
   public readonly code: string;
@@ -9,25 +9,59 @@ export class AppError extends Error {
   public readonly timestamp: string;
   public readonly requestId?: string;
 
+  /**
+   * Create an AppError
+   * @param errorCodeOrMessage - Either an ErrorCode key (e.g., "AUTH_INVALID_CREDENTIALS") or a custom message string
+   * @param optionsOrStatusCode - Either options object (for ErrorCode) or status code number (for custom message)
+   */
   constructor(
-    errorCode: ErrorCode,
-    options?: {
+    errorCodeOrMessage: ErrorCode | string,
+    optionsOrStatusCode?: {
       message?: string;
       details?: Record<string, unknown>;
       requestId?: string;
-    }
+    } | number
   ) {
-    const errorInfo = getErrorInfo(errorCode);
-    const message = options?.message || errorInfo.message;
+    // Check if first argument is a valid ErrorCode
+    const isErrorCode = errorCodeOrMessage in ErrorCodes;
+
+    let message: string;
+    let code: string;
+    let statusCode: number;
+    let details: Record<string, unknown> | undefined;
+    let requestId: string | undefined;
+
+    if (isErrorCode) {
+      // New pattern: ErrorCode + options
+      const errorInfo = getErrorInfo(errorCodeOrMessage as ErrorCode);
+      const options = optionsOrStatusCode as {
+        message?: string;
+        details?: Record<string, unknown>;
+        requestId?: string;
+      } | undefined;
+
+      message = options?.message || errorInfo.message;
+      code = errorInfo.code;
+      statusCode = errorInfo.status;
+      details = options?.details;
+      requestId = options?.requestId;
+    } else {
+      // Legacy pattern: custom message + status code
+      message = errorCodeOrMessage;
+      statusCode = typeof optionsOrStatusCode === "number" ? optionsOrStatusCode : 400;
+      code = statusCode >= 500 ? "E9001" : `E${Math.floor(statusCode / 100)}000`;
+      details = undefined;
+      requestId = undefined;
+    }
 
     super(message);
 
-    this.code = errorInfo.code;
-    this.statusCode = errorInfo.status;
+    this.code = code;
+    this.statusCode = statusCode;
     this.isOperational = true;
-    this.details = options?.details;
+    this.details = details;
     this.timestamp = new Date().toISOString();
-    this.requestId = options?.requestId;
+    this.requestId = requestId;
 
     Object.setPrototypeOf(this, AppError.prototype);
     Error.captureStackTrace(this, this.constructor);
