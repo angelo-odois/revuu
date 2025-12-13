@@ -47,19 +47,12 @@ import {
   AlertDescription,
 } from "@/components/ui/alert";
 import { useAuthStore } from "@/lib/store";
-import { api } from "@/lib/api";
+import { api, type CustomDomain } from "@/lib/api";
 import { AdminLayout, SettingsPageSkeleton } from "@/components/admin";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { toast } from "@/hooks/use-toast";
 import { LanguageSelectorInline } from "@/components/LanguageSelector";
 import { cn } from "@/lib/utils";
-
-interface CustomDomain {
-  id: string;
-  domain: string;
-  status: "pending" | "active" | "error";
-  createdAt: string;
-}
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -99,13 +92,28 @@ export default function SettingsPage() {
 
   const loadData = async () => {
     try {
+      const token = await getValidToken();
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       if (user?.username) {
         setUsername(user.username);
       }
       if (user?.avatarUrl) {
         setAvatarUrl(user.avatarUrl);
       }
-      // TODO: Load branding preference and custom domains from API
+
+      // Load custom domains from API (only for Pro/Business users)
+      if (user?.plan === "pro" || user?.plan === "business") {
+        try {
+          const domains = await api.getDomains(token);
+          setCustomDomains(domains);
+        } catch (error) {
+          console.error("Failed to load domains:", error);
+        }
+      }
     } catch (error) {
       console.error("Failed to load data:", error);
     } finally {
@@ -223,16 +231,12 @@ export default function SettingsPage() {
   const handleAddDomain = async () => {
     if (!newDomain.trim()) return;
 
+    const token = await getValidToken();
+    if (!token) return;
+
     setAddingDomain(true);
     try {
-      // TODO: Implement API call to add custom domain
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const domain: CustomDomain = {
-        id: Date.now().toString(),
-        domain: newDomain,
-        status: "pending",
-        createdAt: new Date().toISOString(),
-      };
+      const domain = await api.addDomain(newDomain, token);
       setCustomDomains([...customDomains, domain]);
       setNewDomain("");
       setShowDomainDialog(false);
@@ -246,8 +250,11 @@ export default function SettingsPage() {
   };
 
   const handleRemoveDomain = async (domainId: string) => {
+    const token = await getValidToken();
+    if (!token) return;
+
     try {
-      // TODO: Implement API call to remove custom domain
+      await api.deleteDomain(domainId, token);
       setCustomDomains(customDomains.filter(d => d.id !== domainId));
       toast({ title: "Domínio removido", variant: "success" });
     } catch (error) {

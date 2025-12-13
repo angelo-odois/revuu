@@ -15,6 +15,7 @@ import {
   PageView,
   Ticket,
   TicketMessage,
+  CustomDomain,
 } from "./entities/index.js";
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -24,7 +25,7 @@ export const AppDataSource = new DataSource({
   url: process.env.POSTGRES_URL,
   synchronize: !isProduction,
   logging: !isProduction,
-  entities: [User, Page, BlockTemplate, Asset, Setting, Profile, Experience, Education, Skill, Project, PageTemplate, PageView, Ticket, TicketMessage],
+  entities: [User, Page, BlockTemplate, Asset, Setting, Profile, Experience, Education, Skill, Project, PageTemplate, PageView, Ticket, TicketMessage, CustomDomain],
   migrations: ["src/migrations/*.ts"],
   subscribers: [],
 });

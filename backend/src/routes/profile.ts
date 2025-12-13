@@ -171,7 +171,9 @@ router.post(
     }
 
     await profileRepository().save(profile);
+    // Invalidate both profile and portfolio caches since portfolio uses profile data
     await cache.invalidatePattern("profile:*");
+    await cache.invalidatePattern("portfolio:*");
 
     res.json(profile);
   })
@@ -198,7 +200,9 @@ router.delete(
     }
 
     await profileRepository().remove(profile);
+    // Invalidate both profile and portfolio caches
     await cache.invalidatePattern("profile:*");
+    await cache.invalidatePattern("portfolio:*");
 
     res.json({ message: "Profile deleted successfully" });
   })

@@ -12,3 +12,4 @@ export { PageTemplate, PageTemplateCategory } from "./PageTemplate.js";
 export { PageView, ViewType } from "./PageView.js";
 export { Ticket, TicketStatus, TicketPriority, TicketCategory, SLA_DEADLINES } from "./Ticket.js";
 export { TicketMessage, MessageType } from "./TicketMessage.js";
+export { CustomDomain, DomainStatus } from "./CustomDomain.js";

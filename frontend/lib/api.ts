@@ -7,6 +7,18 @@ interface FetchOptions extends RequestInit {
   token?: string;
 }
 
+export interface CustomDomain {
+  id: string;
+  userId: string;
+  domain: string;
+  status: "pending" | "active" | "error";
+  verificationToken?: string;
+  verifiedAt?: string;
+  errorMessage?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function fetchAPI<T>(
   endpoint: string,
   options: FetchOptions = {}
@@ -469,6 +481,29 @@ export const api = {
   assignTicketToMe: (ticketId: string, token: string) =>
     fetchAPI<Ticket>(`/api/support/admin/tickets/${ticketId}/assign`, {
       method: "POST",
+      token,
+    }),
+
+  // Custom Domains
+  getDomains: (token: string) =>
+    fetchAPI<CustomDomain[]>("/api/domains", { token }),
+
+  addDomain: (domain: string, token: string) =>
+    fetchAPI<CustomDomain>("/api/domains", {
+      method: "POST",
+      body: JSON.stringify({ domain }),
+      token,
+    }),
+
+  verifyDomain: (id: string, token: string) =>
+    fetchAPI<CustomDomain>(`/api/domains/${id}/verify`, {
+      method: "POST",
+      token,
+    }),
+
+  deleteDomain: (id: string, token: string) =>
+    fetchAPI(`/api/domains/${id}`, {
+      method: "DELETE",
       token,
     }),
 };

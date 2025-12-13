@@ -14,6 +14,7 @@ import analyticsRoutes from "./analytics.js";
 import adminRoutes from "./admin.js";
 import subscriptionRoutes from "./subscription.js";
 import supportRoutes from "./support.js";
+import domainsRoutes from "./domains.js";
 
 const router: ReturnType<typeof Router> = Router();
 
@@ -34,5 +35,6 @@ router.use("/page-templates", pageTemplatesRoutes);
 router.use("/analytics", analyticsRoutes);
 router.use("/subscription", subscriptionRoutes);
 router.use("/support", supportRoutes);
+router.use("/domains", domainsRoutes);
 
 export default router;
