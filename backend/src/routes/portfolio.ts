@@ -44,9 +44,11 @@ async function buildPortfolioResponse(userId: string, user: User, includeAllPage
   ]);
 
   // Get plan features for branding decisions
+  // Free users always show branding, Business users can toggle it off via profile.showBranding
+  const isFreeUser = user.plan === "free" || !user.plan;
   const planFeatures = includePlanFeatures ? {
     plan: user.plan || "free",
-    showBranding: user.plan === "free" || !user.plan, // Free users show branding
+    showBranding: isFreeUser ? true : (profile?.showBranding ?? true),
     hasContactForm: user.plan === "pro" || user.plan === "business",
     hasExportPdf: user.plan === "pro" || user.plan === "business",
   } : undefined;

@@ -111,6 +111,7 @@ router.post(
       template,
       accentColor,
       fontFamily,
+      showBranding,
     } = req.body;
 
     let profile = await profileRepository().findOne({ where: { userId } });
@@ -138,6 +139,7 @@ router.post(
         template: template ?? profile.template,
         accentColor: accentColor ?? profile.accentColor,
         fontFamily: fontFamily ?? profile.fontFamily,
+        showBranding: showBranding ?? profile.showBranding,
       });
     } else {
       if (!fullName) {
@@ -167,6 +169,7 @@ router.post(
         template: template ?? "modern",
         accentColor: accentColor ?? "amber",
         fontFamily: fontFamily ?? "inter",
+        showBranding: showBranding ?? true,
       });
     }
 

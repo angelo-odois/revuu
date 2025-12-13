@@ -85,6 +85,10 @@ export class Profile {
   @Column({ type: "varchar", length: 50, default: "inter" })
   fontFamily!: string;
 
+  // Branding (only Business plan users can hide branding)
+  @Column({ type: "boolean", default: true })
+  showBranding!: boolean;
+
   // User relation
   @Column({ type: "uuid", name: "user_id" })
   userId!: string;
