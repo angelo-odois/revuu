@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, RefreshCcw, Home, Copy, Check } from "lucide-react";
+import { AlertTriangle, RefreshCcw, Home, Copy, Check, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ErrorInfo {
@@ -62,6 +62,22 @@ Timestamp: ${errorInfo.timestamp || new Date().toISOString()}`;
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const getReportUrl = () => {
+    const subject = encodeURIComponent(`Erro ${errorInfo.code || "E9001"}: ${errorInfo.message || error.message}`.substring(0, 200));
+    const description = encodeURIComponent(`Detalhes do Erro:
+
+Codigo: ${errorInfo.code || "E9001"}
+Mensagem: ${errorInfo.message || error.message}
+Request ID: ${errorInfo.requestId || error.digest || "N/A"}
+Timestamp: ${errorInfo.timestamp || new Date().toISOString()}
+URL: ${typeof window !== 'undefined' ? window.location.href : 'N/A'}
+User Agent: ${typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A'}
+
+Por favor, descreva o que voce estava fazendo quando o erro ocorreu:
+`);
+    return `/admin/support/tickets?create=true&subject=${subject}&description=${description}&category=bug_report&priority=high`;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full px-6 text-center">
@@ -79,7 +95,7 @@ Timestamp: ${errorInfo.timestamp || new Date().toISOString()}`;
           {errorInfo.message || "Ocorreu um erro inesperado. Por favor, tente novamente."}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
           <Button onClick={reset} variant="default">
             <RefreshCcw className="w-4 h-4 mr-2" />
             Tentar Novamente
@@ -88,6 +104,15 @@ Timestamp: ${errorInfo.timestamp || new Date().toISOString()}`;
             <Link href="/">
               <Home className="w-4 h-4 mr-2" />
               Pagina Inicial
+            </Link>
+          </Button>
+        </div>
+
+        <div className="mb-8">
+          <Button asChild variant="destructive" size="sm">
+            <Link href={getReportUrl()}>
+              <Ticket className="w-4 h-4 mr-2" />
+              Reportar Erro
             </Link>
           </Button>
         </div>

@@ -10,3 +10,5 @@ export { Skill, SkillCategory, SkillLevel } from "./Skill.js";
 export { Project, ProjectStatus } from "./Project.js";
 export { PageTemplate, PageTemplateCategory } from "./PageTemplate.js";
 export { PageView, ViewType } from "./PageView.js";
+export { Ticket, TicketStatus, TicketPriority, TicketCategory, SLA_DEADLINES } from "./Ticket.js";
+export { TicketMessage, MessageType } from "./TicketMessage.js";

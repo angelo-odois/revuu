@@ -17,6 +17,7 @@ import { Project } from "./Project.js";
 
 export enum UserRole {
   ADMIN = "admin",
+  SUPPORT = "support",
   EDITOR = "editor",
 }
 

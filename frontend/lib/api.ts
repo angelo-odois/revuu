@@ -369,6 +369,108 @@ export const api = {
 
   getFeatures: (token: string) =>
     fetchAPI("/api/subscription/features", { token }),
+
+  // Admin - User Management (admin only)
+  getAdminUsers: (token: string, params?: { page?: number; limit?: number; search?: string; plan?: string; role?: string }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.set("page", params.page.toString());
+    if (params?.limit) searchParams.set("limit", params.limit.toString());
+    if (params?.search) searchParams.set("search", params.search);
+    if (params?.plan) searchParams.set("plan", params.plan);
+    if (params?.role) searchParams.set("role", params.role);
+    const query = searchParams.toString();
+    return fetchAPI<AdminUsersResponse>(`/api/admin/users${query ? `?${query}` : ""}`, { token });
+  },
+
+  getAdminUsersStats: (token: string) =>
+    fetchAPI<AdminUsersStats>("/api/admin/users/stats", { token }),
+
+  getAdminUser: (id: string, token: string) =>
+    fetchAPI<AdminUser>(`/api/admin/users/${id}`, { token }),
+
+  updateAdminUser: (id: string, data: { plan?: string; role?: string; subscriptionStatus?: string }, token: string) =>
+    fetchAPI<AdminUser>(`/api/admin/users/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+      token,
+    }),
+
+  deleteAdminUser: (id: string, token: string) =>
+    fetchAPI(`/api/admin/users/${id}`, {
+      method: "DELETE",
+      token,
+    }),
+
+  // Support Tickets - User
+  getMyTickets: (token: string, params?: { status?: TicketStatus; page?: number; limit?: number }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.status) searchParams.set("status", params.status);
+    if (params?.page) searchParams.set("page", params.page.toString());
+    if (params?.limit) searchParams.set("limit", params.limit.toString());
+    const query = searchParams.toString();
+    return fetchAPI<TicketsResponse>(`/api/support/tickets${query ? `?${query}` : ""}`, { token });
+  },
+
+  getTicket: (id: string, token: string) =>
+    fetchAPI<Ticket>(`/api/support/tickets/${id}`, { token }),
+
+  createTicket: (data: { subject: string; description: string; priority?: TicketPriority; category?: TicketCategory }, token: string) =>
+    fetchAPI<Ticket>("/api/support/tickets", {
+      method: "POST",
+      body: JSON.stringify(data),
+      token,
+    }),
+
+  addTicketMessage: (ticketId: string, content: string, token: string, isInternal?: boolean) =>
+    fetchAPI<TicketMessage>(`/api/support/tickets/${ticketId}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ content, isInternal }),
+      token,
+    }),
+
+  closeTicket: (ticketId: string, token: string) =>
+    fetchAPI<Ticket>(`/api/support/tickets/${ticketId}/close`, {
+      method: "POST",
+      token,
+    }),
+
+  // Support Tickets - Admin
+  getAdminTickets: (token: string, params?: {
+    status?: TicketStatus;
+    priority?: TicketPriority;
+    category?: TicketCategory;
+    search?: string;
+    assignedToMe?: boolean;
+    page?: number;
+    limit?: number;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.status) searchParams.set("status", params.status);
+    if (params?.priority) searchParams.set("priority", params.priority);
+    if (params?.category) searchParams.set("category", params.category);
+    if (params?.search) searchParams.set("search", params.search);
+    if (params?.assignedToMe) searchParams.set("assignedToMe", "true");
+    if (params?.page) searchParams.set("page", params.page.toString());
+    if (params?.limit) searchParams.set("limit", params.limit.toString());
+    const query = searchParams.toString();
+    return fetchAPI<TicketsResponse>(`/api/support/admin/tickets${query ? `?${query}` : ""}`, { token });
+  },
+
+  getAdminTicketStats: (token: string) =>
+    fetchAPI<TicketStats>("/api/support/admin/tickets/stats", { token }),
+
+  updateAdminTicket: (id: string, data: { status?: TicketStatus; priority?: TicketPriority; assignedToId?: string | null }, token: string) =>
+    fetchAPI<Ticket>(`/api/support/admin/tickets/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+      token,
+    }),
+
+  assignTicketToMe: (ticketId: string, token: string) =>
+    fetchAPI<Ticket>(`/api/support/admin/tickets/${ticketId}/assign`, {
+      method: "POST",
+      token,
+    }),
 };
 
 // Types for Page Templates
@@ -411,4 +513,104 @@ export interface PageAnalytics {
   title: string;
   slug: string;
   views: string;
+}
+
+// Types for Admin User Management
+export interface AdminUser {
+  id: string;
+  name: string;
+  username?: string;
+  email: string;
+  role: "admin" | "support" | "editor";
+  plan: "free" | "pro" | "business";
+  subscriptionStatus: "active" | "canceled" | "past_due" | "trialing";
+  subscriptionStartedAt?: string;
+  subscriptionEndsAt?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  onboardingCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminUsersResponse {
+  users: AdminUser[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface AdminUsersStats {
+  totalUsers: number;
+  newUsersThisMonth: number;
+  byPlan: Record<string, number>;
+  byRole: Record<string, number>;
+}
+
+// Types for Support Tickets
+export type TicketStatus = "open" | "in_progress" | "waiting_response" | "resolved" | "closed";
+export type TicketPriority = "low" | "medium" | "high" | "urgent";
+export type TicketCategory = "technical" | "billing" | "account" | "feature_request" | "bug_report" | "other";
+export type MessageType = "user" | "support" | "system";
+
+export interface TicketUser {
+  id: string;
+  name: string;
+  email?: string;
+}
+
+export interface Ticket {
+  id: string;
+  userId: string;
+  user?: TicketUser;
+  assignedToId?: string;
+  assignedTo?: TicketUser;
+  subject: string;
+  description: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  category: TicketCategory;
+  slaDeadline: string;
+  slaBreach: boolean;
+  createdAt: string;
+  updatedAt: string;
+  firstResponseAt?: string;
+  resolvedAt?: string;
+  closedAt?: string;
+  messages?: TicketMessage[];
+}
+
+export interface TicketMessage {
+  id: string;
+  ticketId: string;
+  userId?: string;
+  user?: TicketUser;
+  content: string;
+  type: MessageType;
+  attachments?: string[];
+  isInternal: boolean;
+  createdAt: string;
+}
+
+export interface TicketsResponse {
+  tickets: Ticket[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface TicketStats {
+  totalOpen: number;
+  totalResolved: number;
+  totalClosed: number;
+  slaBreached: number;
+  byPriority: Record<string, number>;
+  byCategory: Record<string, number>;
+  avgResolutionTimeHours: string | null;
 }

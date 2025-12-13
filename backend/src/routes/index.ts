@@ -13,6 +13,7 @@ import pageTemplatesRoutes from "./pageTemplates.js";
 import analyticsRoutes from "./analytics.js";
 import adminRoutes from "./admin.js";
 import subscriptionRoutes from "./subscription.js";
+import supportRoutes from "./support.js";
 
 const router: ReturnType<typeof Router> = Router();
 
@@ -32,5 +33,6 @@ router.use("/portfolio", portfolioRoutes);
 router.use("/page-templates", pageTemplatesRoutes);
 router.use("/analytics", analyticsRoutes);
 router.use("/subscription", subscriptionRoutes);
+router.use("/support", supportRoutes);
 
 export default router;

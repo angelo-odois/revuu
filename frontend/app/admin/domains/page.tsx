@@ -43,7 +43,7 @@ export default function DomainsPage() {
 
   const userPlan = user?.plan || "free";
   const hasCustomDomain = userPlan === "pro" || userPlan === "business";
-  const maxDomains = userPlan === "business" ? -1 : userPlan === "pro" ? 1 : 0;
+  const maxDomains: number = userPlan === "business" ? -1 : userPlan === "pro" ? 1 : 0;
   const canAddMore = maxDomains === -1 || domains.length < maxDomains;
 
   useEffect(() => {
