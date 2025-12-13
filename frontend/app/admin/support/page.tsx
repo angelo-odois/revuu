@@ -15,7 +15,6 @@ import {
   ExternalLink,
   FileText,
   Users,
-  Phone,
   Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -66,7 +65,6 @@ const SUPPORT_TIERS: Record<string, SupportTier> = {
     features: [
       "Tudo do plano anterior",
       "Gerente de conta dedicado",
-      "Suporte por telefone",
       "Chamadas de video",
       "SLA garantido",
       "Onboarding personalizado",
@@ -155,31 +153,29 @@ export default function SupportPage() {
           </CardContent>
         </Card>
 
-        {/* Tickets Card */}
-        <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="p-3 rounded-xl bg-primary/20">
-                <FileText className="h-6 w-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold">Tickets de Suporte</h3>
-                <p className="text-sm text-muted-foreground">
-                  Abra e acompanhe seus tickets de suporte
-                </p>
-              </div>
-              <Link href="/admin/support/tickets">
-                <Button className="gap-2">
-                  <FileText className="h-4 w-4" />
-                  Ver Tickets
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Contact Options */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
+          {/* Support Tickets - Available to all */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <FileText className="h-5 w-5 text-purple-500" />
+                Tickets
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Abra e acompanhe seus tickets
+              </p>
+              <Button variant="default" className="w-full" asChild>
+                <Link href="/admin/support/tickets">
+                  Ver Tickets
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Email Support - Available to all */}
           <Card>
             <CardHeader>
@@ -223,33 +219,6 @@ export default function SupportPage() {
             </CardContent>
           </Card>
 
-          {/* Phone Support - Business only */}
-          <Card className={!hasDedicatedSupport ? "opacity-75" : ""}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Phone className="h-5 w-5 text-amber-500" />
-                Telefone
-                {!hasDedicatedSupport && <Badge variant="outline">Business</Badge>}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Ligue para nosso suporte dedicado
-              </p>
-              <Button
-                variant={hasDedicatedSupport ? "default" : "outline"}
-                className="w-full"
-                disabled={!hasDedicatedSupport}
-                asChild={hasDedicatedSupport}
-              >
-                {hasDedicatedSupport ? (
-                  <a href="tel:+5511999999999">+55 11 99999-9999</a>
-                ) : (
-                  "Disponivel no Business"
-                )}
-              </Button>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Dedicated Account Manager - Business only */}
@@ -329,12 +298,6 @@ export default function SupportPage() {
                       <td className="text-center py-3 px-4"><CheckCircle className="h-4 w-4 text-green-500 mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
-                      <td className="py-3 pr-4">Telefone</td>
-                      <td className="text-center py-3 px-4">-</td>
-                      <td className="text-center py-3 px-4">-</td>
-                      <td className="text-center py-3 px-4"><CheckCircle className="h-4 w-4 text-green-500 mx-auto" /></td>
-                    </tr>
-                    <tr className="border-b">
                       <td className="py-3 pr-4">Gerente dedicado</td>
                       <td className="text-center py-3 px-4">-</td>
                       <td className="text-center py-3 px-4">-</td>
@@ -362,57 +325,6 @@ export default function SupportPage() {
           </Card>
         )}
 
-        {/* Quick Links */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-500" />
-              Recursos de Ajuda
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <a
-                href="https://docs.revuu.com.br"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border hover:border-foreground/20 transition-colors"
-              >
-                <FileText className="h-5 w-5 text-muted-foreground mb-2" />
-                <h4 className="font-medium">Documentacao</h4>
-                <p className="text-xs text-muted-foreground">Guias completos</p>
-              </a>
-              <a
-                href="https://revuu.com.br/faq"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border hover:border-foreground/20 transition-colors"
-              >
-                <MessageCircle className="h-5 w-5 text-muted-foreground mb-2" />
-                <h4 className="font-medium">FAQ</h4>
-                <p className="text-xs text-muted-foreground">Perguntas frequentes</p>
-              </a>
-              <a
-                href="https://status.revuu.com.br"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border hover:border-foreground/20 transition-colors"
-              >
-                <Zap className="h-5 w-5 text-muted-foreground mb-2" />
-                <h4 className="font-medium">Status</h4>
-                <p className="text-xs text-muted-foreground">Status do sistema</p>
-              </a>
-              <Link
-                href="/admin/training"
-                className="p-4 rounded-lg border hover:border-foreground/20 transition-colors"
-              >
-                <Star className="h-5 w-5 text-muted-foreground mb-2" />
-                <h4 className="font-medium">Treinamento</h4>
-                <p className="text-xs text-muted-foreground">Cursos e tutoriais</p>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </AdminLayout>
   );

@@ -75,7 +75,7 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "Curriculo",
+    label: "Currículo",
     icon: User,
     items: [
       {
@@ -84,12 +84,12 @@ const navSections: NavSection[] = [
         icon: User,
       },
       {
-        title: "Experiencias",
+        title: "Experiências",
         href: "/admin/experiences",
         icon: Briefcase,
       },
       {
-        title: "Formacao",
+        title: "Formação",
         href: "/admin/education",
         icon: GraduationCap,
       },
@@ -101,7 +101,7 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "Portfolio",
+    label: "Portfólio",
     icon: FolderKanban,
     items: [
       {
@@ -110,19 +110,14 @@ const navSections: NavSection[] = [
         icon: FolderKanban,
       },
       {
-        title: "Aparencia",
+        title: "Aparência",
         href: "/admin/templates",
         icon: Paintbrush,
-      },
-      {
-        title: "Dominios",
-        href: "/admin/domains",
-        icon: Globe,
       },
     ],
   },
   {
-    label: "Avancado",
+    label: "Avançado",
     icon: Key,
     items: [
       {
@@ -131,7 +126,7 @@ const navSections: NavSection[] = [
         icon: Key,
       },
       {
-        title: "Usuarios",
+        title: "Usuários",
         href: "/admin/users",
         icon: Users,
         adminOnly: true,
@@ -152,7 +147,7 @@ const navSections: NavSection[] = [
         icon: HeadphonesIcon,
       },
       {
-        title: "Configuracoes",
+        title: "Configurações",
         href: "/admin/settings",
         icon: Settings,
       },
@@ -414,7 +409,7 @@ export function AdminSidebar() {
                         <ExternalLink className="h-5 w-5" />
                       </Link>
                     </TooltipTrigger>
-                    <TooltipContent side="right">Ver Curriculo</TooltipContent>
+                    <TooltipContent side="right">Ver Currículo</TooltipContent>
                   </Tooltip>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
@@ -437,7 +432,7 @@ export function AdminSidebar() {
                   className="group flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200 mb-2"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Ver Curriculo Publico
+                  Ver Currículo Público
                 </Link>
                 <div className="flex items-center gap-3 px-3 py-2">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 font-semibold shrink-0">
@@ -445,7 +440,7 @@ export function AdminSidebar() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate">{user.name || "Usuario"}</p>
+                      <p className="text-sm font-medium truncate">{user.name || "Usuário"}</p>
                       <Badge
                         variant="outline"
                         className={cn(
@@ -458,7 +453,7 @@ export function AdminSidebar() {
                             "border-amber-500 text-amber-600 bg-amber-50 dark:bg-amber-950"
                         )}
                       >
-                        {user.plan === "pro" ? "PRO" : user.plan === "business" ? "BUSINESS" : "GRATIS"}
+                        {user.plan === "pro" ? "PRO" : user.plan === "business" ? "BUSINESS" : "GRÁTIS"}
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>

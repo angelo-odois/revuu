@@ -15,11 +15,11 @@ export default function NotFound() {
         <h1 className="text-7xl font-bold text-foreground mb-2">404</h1>
 
         <p className="text-xl font-medium text-foreground mb-2">
-          Pagina nao encontrada
+          Página não encontrada
         </p>
 
         <p className="text-muted-foreground mb-8">
-          A pagina que voce esta procurando nao existe ou foi movida.
+          A página que você está procurando não existe ou foi movida.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -32,13 +32,13 @@ export default function NotFound() {
           <Button asChild>
             <Link href="/">
               <Home className="w-4 h-4 mr-2" />
-              Pagina Inicial
+              Página Inicial
             </Link>
           </Button>
         </div>
 
         <p className="mt-8 text-xs text-muted-foreground">
-          Codigo do erro: <span className="font-mono font-semibold text-amber-600">E9005</span>
+          Código do erro: <span className="font-mono font-semibold text-amber-600">E9005</span>
         </p>
       </div>
     </div>

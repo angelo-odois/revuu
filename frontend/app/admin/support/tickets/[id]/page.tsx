@@ -54,7 +54,7 @@ const statusColors: Record<TicketStatus, string> = {
 
 const priorityLabels: Record<TicketPriority, string> = {
   low: "Baixa",
-  medium: "Media",
+  medium: "Média",
   high: "Alta",
   urgent: "Urgente",
 };
@@ -67,10 +67,10 @@ const priorityColors: Record<TicketPriority, string> = {
 };
 
 const categoryLabels: Record<TicketCategory, string> = {
-  technical: "Tecnico",
-  billing: "Cobranca",
+  technical: "Técnico",
+  billing: "Cobrança",
   account: "Conta",
-  feature_request: "Sugestao",
+  feature_request: "Sugestão",
   bug_report: "Bug",
   other: "Outro",
 };
@@ -78,7 +78,7 @@ const categoryLabels: Record<TicketCategory, string> = {
 export default function TicketDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const ticketId = params.id as string;
+  const ticketId = params?.id as string;
 
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
@@ -257,7 +257,7 @@ export default function TicketDetailPage() {
 
   if (loading) {
     return (
-      <AdminLayout title="Detalhes do Ticket">
+      <AdminLayout>
         <DashboardSkeleton />
       </AdminLayout>
     );
@@ -265,10 +265,10 @@ export default function TicketDetailPage() {
 
   if (!ticket) {
     return (
-      <AdminLayout title="Ticket nao encontrado">
+      <AdminLayout>
         <div className="flex flex-col items-center justify-center py-12">
           <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-          <h2 className="text-lg font-medium">Ticket nao encontrado</h2>
+          <h2 className="text-lg font-medium">Ticket não encontrado</h2>
           <Link href="/admin/support/tickets">
             <Button className="mt-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -281,7 +281,7 @@ export default function TicketDetailPage() {
   }
 
   return (
-    <AdminLayout title={`Ticket #${ticket.id.slice(0, 8)}`}>
+    <AdminLayout>
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/admin/support/tickets">

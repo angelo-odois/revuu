@@ -50,19 +50,19 @@ export default function RegisterPage() {
     const usernameRegex = /^[a-zA-Z0-9-]+$/;
     if (!usernameRegex.test(username)) {
       setUsernameStatus("invalid");
-      setUsernameMessage("Apenas letras, numeros e hifens");
+      setUsernameMessage("Apenas letras, números e hífens");
       return;
     }
 
     if (username.length < 3) {
       setUsernameStatus("invalid");
-      setUsernameMessage("Minimo 3 caracteres");
+      setUsernameMessage("Mínimo 3 caracteres");
       return;
     }
 
     if (username.length > 30) {
       setUsernameStatus("invalid");
-      setUsernameMessage("Maximo 30 caracteres");
+      setUsernameMessage("Máximo 30 caracteres");
       return;
     }
 
@@ -77,10 +77,10 @@ export default function RegisterPage() {
 
         if (data.available) {
           setUsernameStatus("available");
-          setUsernameMessage("Disponivel!");
+          setUsernameMessage("Disponível!");
         } else {
           setUsernameStatus("taken");
-          setUsernameMessage(data.reason || "Username indisponivel");
+          setUsernameMessage(data.reason || "Username indisponível");
         }
       } catch {
         setUsernameStatus("idle");
@@ -100,7 +100,7 @@ export default function RegisterPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("As senhas nao conferem");
+      setError("As senhas não conferem");
       return;
     }
 
@@ -110,7 +110,7 @@ export default function RegisterPage() {
     }
 
     if (usernameStatus !== "available") {
-      setError("Escolha um username valido e disponivel");
+      setError("Escolha um username válido e disponível");
       return;
     }
 
@@ -337,7 +337,7 @@ export default function RegisterPage() {
                 />
               </div>
               {confirmPassword && password !== confirmPassword && (
-                <p className="text-xs text-red-600">As senhas nao conferem</p>
+                <p className="text-xs text-red-600">As senhas não conferem</p>
               )}
             </div>
 

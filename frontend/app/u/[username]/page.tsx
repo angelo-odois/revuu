@@ -1,10 +1,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ViewTracker } from "@/components/ViewTracker";
-import {
-  getTemplateComponent,
-  type PortfolioData,
-} from "@/components/portfolio-templates";
+import { TemplateRenderer } from "@/components/portfolio-templates/TemplateRenderer";
+import type { PortfolioData } from "@/components/portfolio-templates/types";
 import { getServerApiUrl } from "@/lib/server-api";
 
 interface PageProps {
@@ -81,17 +79,15 @@ export default async function PortfolioPage({ params, searchParams }: PageProps)
     ? previewFont
     : portfolio.profile?.fontFamily || "inter";
 
-  // Get the appropriate template component
-  const TemplateComponent = getTemplateComponent(templateId);
-
   return (
     <>
       {/* Analytics Tracking - only track if not in preview mode */}
       {!isPreviewMode && <ViewTracker username={username} />}
 
       {/* Render the selected template */}
-      <TemplateComponent
+      <TemplateRenderer
         portfolio={portfolio}
+        templateId={templateId}
         accentColor={accentColor}
         fontFamily={fontFamily}
       />

@@ -165,7 +165,7 @@ export default function UsersAdminPage() {
       );
 
       toast({
-        title: "Usuario atualizado!",
+        title: "Usuário atualizado!",
         variant: "success",
       });
 
@@ -195,7 +195,7 @@ export default function UsersAdminPage() {
       await api.deleteAdminUser(deletingUser.id, token);
 
       toast({
-        title: "Usuario excluido!",
+        title: "Usuário excluído!",
         variant: "success",
       });
 
@@ -266,20 +266,20 @@ export default function UsersAdminPage() {
 
   if (loading) {
     return (
-      <AdminLayout title="Usuarios">
+      <AdminLayout>
         <DashboardSkeleton />
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout title="Gerenciamento de Usuarios">
+    <AdminLayout>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total de Usuarios
+              Total de Usuários
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -388,7 +388,7 @@ export default function UsersAdminPage() {
               <thead className="bg-muted/50">
                 <tr>
                   <th className="text-left p-3 text-sm font-medium text-muted-foreground">
-                    Usuario
+                    Usuário
                   </th>
                   <th className="text-left p-3 text-sm font-medium text-muted-foreground">
                     Plano
@@ -446,7 +446,7 @@ export default function UsersAdminPage() {
                             disabled={u.id === user?.id}
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Excluir Usuario
+                            Excluir Usuário
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -483,7 +483,7 @@ export default function UsersAdminPage() {
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <span className="text-sm">
-                  Pagina {pagination.page} de {pagination.totalPages}
+                  Página {pagination.page} de {pagination.totalPages}
                 </span>
                 <Button
                   variant="outline"
@@ -503,9 +503,9 @@ export default function UsersAdminPage() {
       <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar Usuario</DialogTitle>
+            <DialogTitle>Editar Usuário</DialogTitle>
             <DialogDescription>
-              Altere o plano ou role do usuario {editingUser?.name}
+              Altere o plano ou role do usuário {editingUser?.name}
             </DialogDescription>
           </DialogHeader>
 
@@ -553,9 +553,9 @@ export default function UsersAdminPage() {
       <Dialog open={!!deletingUser} onOpenChange={() => setDeletingUser(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Excluir Usuario</DialogTitle>
+            <DialogTitle>Excluir Usuário</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja excluir o usuario {deletingUser?.name}? Esta acao nao pode
+              Tem certeza que deseja excluir o usuário {deletingUser?.name}? Esta ação não pode
               ser desfeita.
             </DialogDescription>
           </DialogHeader>

@@ -66,7 +66,7 @@ const statusColors: Record<TicketStatus, string> = {
 
 const priorityLabels: Record<TicketPriority, string> = {
   low: "Baixa",
-  medium: "Media",
+  medium: "Média",
   high: "Alta",
   urgent: "Urgente",
 };
@@ -79,10 +79,10 @@ const priorityColors: Record<TicketPriority, string> = {
 };
 
 const categoryLabels: Record<TicketCategory, string> = {
-  technical: "Tecnico",
-  billing: "Cobranca",
+  technical: "Técnico",
+  billing: "Cobrança",
   account: "Conta",
-  feature_request: "Sugestao",
+  feature_request: "Sugestão",
   bug_report: "Bug",
   other: "Outro",
 };
@@ -126,12 +126,12 @@ export default function TicketsPage() {
 
   // Handle query parameters for pre-filling the create dialog
   useEffect(() => {
-    const create = searchParams.get("create");
+    const create = searchParams?.get("create");
     if (create === "true") {
-      const subjectParam = searchParams.get("subject");
-      const descriptionParam = searchParams.get("description");
-      const categoryParam = searchParams.get("category");
-      const priorityParam = searchParams.get("priority");
+      const subjectParam = searchParams?.get("subject");
+      const descriptionParam = searchParams?.get("description");
+      const categoryParam = searchParams?.get("category");
+      const priorityParam = searchParams?.get("priority");
 
       if (subjectParam) setSubject(decodeURIComponent(subjectParam));
       if (descriptionParam) setDescription(decodeURIComponent(descriptionParam));
@@ -219,8 +219,8 @@ export default function TicketsPage() {
   const handleCreateTicket = async () => {
     if (!subject.trim() || !description.trim()) {
       toast({
-        title: "Campos obrigatorios",
-        description: "Preencha o assunto e a descricao do ticket",
+        title: "Campos obrigatórios",
+        description: "Preencha o assunto e a descrição do ticket",
         variant: "destructive",
       });
       return;
@@ -273,14 +273,14 @@ export default function TicketsPage() {
 
   if (loading) {
     return (
-      <AdminLayout title="Tickets de Suporte">
+      <AdminLayout>
         <DashboardSkeleton />
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout title={isStaff ? "Gerenciar Tickets" : "Tickets de Suporte"}>
+    <AdminLayout>
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/admin/support">
@@ -398,7 +398,7 @@ export default function TicketsPage() {
               <h3 className="text-lg font-medium">Nenhum ticket encontrado</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 {statusFilter === "all"
-                  ? "Voce ainda nao abriu nenhum ticket de suporte"
+                  ? "Você ainda não abriu nenhum ticket de suporte"
                   : "Nenhum ticket corresponde ao filtro selecionado"}
               </p>
               {statusFilter === "all" && (
@@ -419,7 +419,7 @@ export default function TicketsPage() {
                       </th>
                       {isStaff && (
                         <th className="text-left p-3 text-sm font-medium text-muted-foreground">
-                          Usuario
+                          Usuário
                         </th>
                       )}
                       <th className="text-left p-3 text-sm font-medium text-muted-foreground">
@@ -435,7 +435,7 @@ export default function TicketsPage() {
                         Criado
                       </th>
                       <th className="text-right p-3 text-sm font-medium text-muted-foreground">
-                        Acoes
+                        Ações
                       </th>
                     </tr>
                   </thead>
@@ -456,7 +456,7 @@ export default function TicketsPage() {
                         </td>
                         {isStaff && (
                           <td className="p-3 text-sm text-muted-foreground">
-                            {ticket.user?.name || "Usuario"}
+                            {ticket.user?.name || "Usuário"}
                           </td>
                         )}
                         <td className="p-3 text-sm text-muted-foreground">
@@ -514,7 +514,7 @@ export default function TicketsPage() {
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="text-sm">
-                      Pagina {pagination.page} de {pagination.totalPages}
+                      Página {pagination.page} de {pagination.totalPages}
                     </span>
                     <Button
                       variant="outline"
@@ -538,7 +538,7 @@ export default function TicketsPage() {
           <DialogHeader>
             <DialogTitle>Criar Novo Ticket</DialogTitle>
             <DialogDescription>
-              Descreva seu problema ou duvida e nossa equipe respondera o mais breve possivel.
+              Descreva seu problema ou dúvida e nossa equipe responderá o mais breve possível.
             </DialogDescription>
           </DialogHeader>
 
@@ -588,10 +588,10 @@ export default function TicketsPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="description">Descricao *</Label>
+              <Label htmlFor="description">Descrição *</Label>
               <Textarea
                 id="description"
-                placeholder="Descreva detalhadamente seu problema ou duvida..."
+                placeholder="Descreva detalhadamente seu problema ou dúvida..."
                 rows={5}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

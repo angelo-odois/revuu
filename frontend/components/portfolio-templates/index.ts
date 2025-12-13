@@ -1,3 +1,5 @@
+"use client";
+
 export { ModernTemplate } from "./ModernTemplate";
 export { MinimalTemplate } from "./MinimalTemplate";
 export { ClassicTemplate } from "./ClassicTemplate";
@@ -5,6 +7,7 @@ export { BentoTemplate } from "./BentoTemplate";
 export { TerminalTemplate } from "./TerminalTemplate";
 export { GradientTemplate } from "./GradientTemplate";
 export { ContactForm } from "./ContactForm";
+export { TemplateRenderer } from "./TemplateRenderer";
 export {
   type PortfolioData,
   type TemplateProps,
